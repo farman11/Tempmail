@@ -123,11 +123,11 @@
                         </div>
                         <div class="email-body bg-white p-4 rounded border">
                             {% if message.html_content and message.html_content.strip() %}
-                                <div class="prose max-w-none">{{ message.html_content|safe }}</div>
+                                <div class="prose max-w-none email-content">{{ message.html_content|safe }}</div>
                             {% elif message.text_content and message.text_content.strip() %}
-                                <div class="whitespace-pre-wrap font-mono text-sm">{{ message.text_content }}</div>
+                                <div class="whitespace-pre-wrap font-mono text-sm email-content">{{ message.text_content }}</div>
                             {% elif message.body and message.body.strip() %}
-                                <div class="whitespace-pre-wrap font-mono text-sm">{{ message.body }}</div>
+                                <div class="whitespace-pre-wrap font-mono text-sm email-content">{{ message.body }}</div>
                             {% else %}
                                 <div class="text-gray-500 italic">No message content available</div>
                             {% endif %}
@@ -294,6 +294,14 @@ document.addEventListener('DOMContentLoaded', function() {
                     content.classList.remove('hidden');
                     icon.className = 'fas fa-eye-slash';
                     console.log('Showing email content');
+                    
+                    // Make all links in this email content open in new tabs
+                    setTimeout(() => {
+                        content.querySelectorAll('a').forEach(link => {
+                            link.setAttribute('target', '_blank');
+                            link.setAttribute('rel', 'noopener noreferrer');
+                        });
+                    }, 50);
                 } else {
                     // Hide the content
                     content.style.display = 'none';
@@ -312,5 +320,27 @@ document.addEventListener('DOMContentLoaded', function() {
 setInterval(function() {
     refreshEmails();
 }, 30000);
+
+// Function to make all links in email content open in new tabs
+function makeLinksOpenInNewTab() {
+    document.querySelectorAll('.email-content a').forEach(link => {
+        link.setAttribute('target', '_blank');
+        link.setAttribute('rel', 'noopener noreferrer');
+    });
+}
+
+// Run the function when page loads and whenever email content is shown
+document.addEventListener('DOMContentLoaded', function() {
+    makeLinksOpenInNewTab();
+});
+
+// Also run when email content is toggled (in case content is dynamically shown)
+const originalToggle = document.querySelectorAll('.toggle-email');
+originalToggle.forEach(button => {
+    button.addEventListener('click', function() {
+        // Small delay to let content appear before processing links
+        setTimeout(makeLinksOpenInNewTab, 100);
+    });
+});
 </script>
 {% endblock %}
