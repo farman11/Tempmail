@@ -29,6 +29,8 @@ class MailTMService:
                 elif isinstance(data, dict):
                     if 'hydra:member' in data:
                         return [domain['domain'] for domain in data['hydra:member']]
+                    elif '@graph' in data:
+                        return [domain['domain'] for domain in data['@graph']]
                     elif 'domains' in data:
                         return [domain['domain'] for domain in data['domains']]
                     elif 'data' in data:
@@ -128,8 +130,10 @@ class MailTMService:
                 return None
             
             # Create TempEmail record in our database
-            temp_email = TempEmail.__new__(TempEmail)
-            temp_email.session_id = session_id
+            temp_email = TempEmail(
+                session_id=session_id,
+                use_real_email=True  # This prevents the __init__ from setting local email
+            )
             temp_email.email_address = email_address
             temp_email.expires_at = datetime.utcnow() + timedelta(hours=24)
             temp_email.is_active = True

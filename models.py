@@ -16,12 +16,15 @@ class TempEmail(db.Model):
     
     def __init__(self, session_id, hours=24, use_real_email=True):
         self.session_id = session_id
+        self.created_at = datetime.utcnow()
+        self.is_active = True
+        
         if not use_real_email:
             # Fallback to local domain
             domain = "tempmail.replit.app"
             self.email_address = f"{uuid.uuid4().hex[:12]}@{domain}"
             self.expires_at = datetime.utcnow() + timedelta(hours=hours)
-        # If use_real_email=True, this will be handled by mail_tm_service.create_real_temp_email()
+        # If use_real_email=True, email_address and other fields will be set manually
     
     @property
     def is_expired(self):
