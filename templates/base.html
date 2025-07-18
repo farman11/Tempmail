@@ -5,6 +5,43 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}TempMail - Professional Temporary Email Service{% endblock %}</title>
     
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="{% block description %}Free temporary email service. Get disposable email addresses instantly. No registration required. Protect your privacy with secure temporary emails that auto-delete after 24 hours.{% endblock %}">
+    <meta name="keywords" content="temporary email, disposable email, temp mail, fake email, private email, email protection, spam protection, anonymous email">
+    <meta name="robots" content="index, follow">
+    <meta name="author" content="TempMail">
+    <link rel="canonical" href="{% block canonical %}{{ request.url }}{% endblock %}">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="{{ request.url }}">
+    <meta property="og:title" content="{% block og_title %}TempMail - Professional Temporary Email Service{% endblock %}">
+    <meta property="og:description" content="{% block og_description %}Free temporary email service. Get disposable email addresses instantly. No registration required. Protect your privacy with secure temporary emails.{% endblock %}">
+    <meta property="og:image" content="{% block og_image %}{{ url_for('static', filename='images/tempmail-og.jpg', _external=True) if url_for else '/static/images/tempmail-og.jpg' }}{% endblock %}">
+    
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="{{ request.url }}">
+    <meta property="twitter:title" content="{% block twitter_title %}TempMail - Professional Temporary Email Service{% endblock %}">
+    <meta property="twitter:description" content="{% block twitter_description %}Free temporary email service. Get disposable email addresses instantly. No registration required.{% endblock %}">
+    <meta property="twitter:image" content="{% block twitter_image %}{{ url_for('static', filename='images/tempmail-og.jpg', _external=True) if url_for else '/static/images/tempmail-og.jpg' }}{% endblock %}">
+    
+    <!-- Structured Data / Schema.org -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "WebSite",
+        "name": "TempMail",
+        "description": "Professional temporary email service for privacy protection",
+        "url": "{{ request.url_root if request else '/' }}",
+        "potentialAction": {
+            "@type": "SearchAction",
+            "target": "{{ request.url_root if request else '/' }}?q={search_term_string}",
+            "query-input": "required name=search_term_string"
+        }
+    }
+    </script>
+    
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     
@@ -59,31 +96,11 @@
     <!-- Top Navigation Bar -->
     <nav class="bg-gray-900 text-white">
         <div class="max-w-7xl mx-auto px-4">
-            <div class="flex justify-between items-center h-12 text-sm">
-                <!-- Left side - App stores -->
-                <div class="flex items-center space-x-6">
-                    <div class="flex items-center space-x-2 hover:text-gray-300 cursor-pointer">
-                        <i class="fab fa-apple text-lg"></i>
-                        <span>App Store</span>
-                    </div>
-                    <div class="flex items-center space-x-2 hover:text-gray-300 cursor-pointer">
-                        <i class="fab fa-google-play text-lg"></i>
-                        <span>Google Play</span>
-                    </div>
-                </div>
-                
+            <div class="flex justify-center items-center h-12 text-sm">
                 <!-- Center Logo -->
                 <div class="flex items-center space-x-2">
                     <i class="fas fa-envelope text-green-400 text-xl"></i>
                     <span class="text-xl font-bold">TEMPMAIL</span>
-                </div>
-                
-                <!-- Right side - Options -->
-                <div class="flex items-center space-x-4">
-                    <span class="hover:text-gray-300 cursor-pointer">Temp Number</span>
-                    <button class="bg-yellow-400 text-black px-4 py-1 rounded-full font-semibold hover:bg-yellow-300 transition-colors">
-                        Premium
-                    </button>
                 </div>
             </div>
         </div>
