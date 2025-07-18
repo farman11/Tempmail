@@ -5,8 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}TempMail - Professional Temporary Email Service{% endblock %}</title>
     
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
     
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -14,211 +14,146 @@
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
-    <!-- Custom CSS -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/custom.css') }}">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .btn-transition { transition: all 0.3s ease; }
+        .btn-transition:hover { transform: translateY(-1px); box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); }
+        .gmail-style { 
+            background: #fff;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .ad-container {
+            background: #f9fafb;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            min-height: 300px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #9ca3af;
+            text-align: center;
+        }
+        .email-body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            color: #1f2937;
+            word-wrap: break-word;
+        }
+        .email-body a {
+            color: #1d4ed8;
+            text-decoration: none;
+        }
+        .email-body a:hover {
+            text-decoration: underline;
+        }
+        .verification-code {
+            background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+            color: #1d4ed8;
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-weight: 700;
+            font-family: monospace;
+            display: inline-block;
+            margin: 4px;
+            border: 2px solid #1d4ed8;
+            letter-spacing: 2px;
+        }
+    </style>
 </head>
-<body class="professional-layout">
+<body class="bg-gray-50 min-h-screen">
     <!-- Header Navigation -->
-    <nav class="navbar navbar-expand-lg professional-navbar fixed-top">
-        <div class="container-fluid">
-            <a class="navbar-brand professional-brand" href="{{ url_for('index') }}">
-                <i class="fas fa-envelope-open-text me-2"></i>
-                <span class="brand-text">TempMail</span>
-                <small class="brand-subtitle">Professional</small>
-            </a>
-            
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item">
-                        <a class="nav-link professional-nav-link" href="{{ url_for('index') }}">
-                            <i class="fas fa-home me-1"></i> Home
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link professional-nav-link" href="#features">
-                            <i class="fas fa-star me-1"></i> Features
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link professional-nav-link" href="#security">
-                            <i class="fas fa-shield-alt me-1"></i> Security
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link professional-nav-link" href="#help">
-                            <i class="fas fa-question-circle me-1"></i> Help
-                        </a>
-                    </li>
-                </ul>
+    <nav class="bg-gradient-to-r from-blue-600 to-blue-800 text-white shadow-lg fixed top-0 left-0 right-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <a href="{{ url_for('index') }}" class="flex items-center space-x-2 text-white hover:text-blue-200">
+                        <i class="fas fa-envelope-open-text text-2xl"></i>
+                        <span class="text-xl font-bold">TempMail</span>
+                    </a>
+                </div>
+                <div class="flex items-center space-x-6">
+                    <a href="{{ url_for('index') }}" class="text-white hover:text-blue-200 transition-colors">
+                        <i class="fas fa-home mr-1"></i> Home
+                    </a>
+                </div>
             </div>
         </div>
     </nav>
 
     <!-- Main Layout Container -->
-    <div class="main-layout-container">
-        <!-- Left Sidebar -->
-        <aside class="left-sidebar">
-            <div class="sidebar-content">
-                <div class="sidebar-header">
-                    <h6 class="sidebar-title">
-                        <i class="fas fa-tools me-2"></i>Quick Tools
-                    </h6>
+    <div class="flex mt-16 min-h-screen">
+        <!-- Left Sidebar with Google Ads -->
+        <aside class="w-64 bg-white shadow-md p-4 h-[calc(100vh-4rem)] overflow-y-auto">
+            <!-- Google Ads Top -->
+            <div class="ad-container mb-6">
+                <div>
+                    <i class="fas fa-ad text-4xl mb-3"></i>
+                    <p class="text-sm">Google Ads<br>Advertisement Space</p>
                 </div>
-                
-                <div class="sidebar-section">
-                    <div class="quick-action-card">
-                        <i class="fas fa-plus-circle text-primary"></i>
-                        <h6>Generate Email</h6>
-                        <p>Create instant email address</p>
-                        <a href="{{ url_for('index') }}" class="btn btn-outline-primary btn-sm">
-                            <i class="fas fa-arrow-right"></i>
-                        </a>
-                    </div>
-                </div>
-                
-                <div class="sidebar-section">
-                    <div class="stats-card">
-                        <h6><i class="fas fa-chart-line me-2"></i>Service Stats</h6>
-                        <div class="stat-item">
-                            <span class="stat-number">99.9%</span>
-                            <span class="stat-label">Uptime</span>
-                        </div>
-                        <div class="stat-item">
-                            <span class="stat-number">< 1s</span>
-                            <span class="stat-label">Email Delivery</span>
-                        </div>
-                        <div class="stat-item">
-                            <span class="stat-number">24/7</span>
-                            <span class="stat-label">Available</span>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="sidebar-section">
-                    <div class="feature-highlight">
-                        <i class="fas fa-shield-check text-success"></i>
-                        <h6>Enterprise Security</h6>
-                        <p>Bank-level encryption for all emails</p>
-                    </div>
+            </div>
+            
+            <!-- Google Ads Bottom -->
+            <div class="ad-container">
+                <div>
+                    <i class="fas fa-bullhorn text-4xl mb-3"></i>
+                    <p class="text-sm">Google Ads<br>Advertisement Space</p>
                 </div>
             </div>
         </aside>
 
         <!-- Main Content Area -->
-        <main class="main-content">
-            <div class="content-wrapper">
-                {% block content %}{% endblock %}
-            </div>
+        <main class="flex-1 p-6 bg-gray-50">
+            {% block content %}{% endblock %}
         </main>
 
-        <!-- Right Sidebar -->
-        <aside class="right-sidebar">
-            <div class="sidebar-content">
-                <div class="sidebar-header">
-                    <h6 class="sidebar-title">
-                        <i class="fas fa-info-circle me-2"></i>Information
-                    </h6>
+        <!-- Right Sidebar with Google Ads -->
+        <aside class="w-64 bg-white shadow-md p-4 h-[calc(100vh-4rem)] overflow-y-auto">
+            <!-- Google Ads Top -->
+            <div class="ad-container mb-6">
+                <div>
+                    <i class="fas fa-ad text-4xl mb-3"></i>
+                    <p class="text-sm">Google Ads<br>Advertisement Space</p>
                 </div>
-                
-                <!-- Google Ads Placeholder -->
-                <div class="sidebar-section">
-                    <div class="ad-container">
-                        <div class="ad-header">
-                            <small class="text-muted">Advertisement</small>
-                        </div>
-                        <div class="ad-content">
-                            <!-- Google Ads code will go here -->
-                            <div class="ad-placeholder">
-                                <i class="fas fa-bullhorn"></i>
-                                <p>Google Ads</p>
-                                <small>300x250 Ad Space</small>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="sidebar-section">
-                    <div class="help-card">
-                        <h6><i class="fas fa-question-circle me-2"></i>Need Help?</h6>
-                        <ul class="help-links">
-                            <li><a href="#"><i class="fas fa-book"></i> Documentation</a></li>
-                            <li><a href="#"><i class="fas fa-video"></i> Video Tutorials</a></li>
-                            <li><a href="#"><i class="fas fa-envelope"></i> Contact Support</a></li>
-                            <li><a href="#"><i class="fas fa-comments"></i> Live Chat</a></li>
-                        </ul>
-                    </div>
-                </div>
-                
-                <div class="sidebar-section">
-                    <div class="security-info">
-                        <h6><i class="fas fa-lock me-2"></i>Your Privacy</h6>
-                        <ul class="security-features">
-                            <li><i class="fas fa-check text-success"></i> No data stored</li>
-                            <li><i class="fas fa-check text-success"></i> Auto-deletion</li>
-                            <li><i class="fas fa-check text-success"></i> SSL encrypted</li>
-                            <li><i class="fas fa-check text-success"></i> GDPR compliant</li>
-                        </ul>
-                    </div>
+            </div>
+            
+            <!-- Google Ads Bottom -->
+            <div class="ad-container">
+                <div>
+                    <i class="fas fa-bullhorn text-4xl mb-3"></i>
+                    <p class="text-sm">Google Ads<br>Advertisement Space</p>
                 </div>
             </div>
         </aside>
     </div>
 
-    <!-- Footer -->
-    <footer class="professional-footer">
-        <div class="footer-content">
-            <div class="container-fluid">
-                <div class="row">
-                    <!-- Footer Left -->
-                    <div class="col-md-4">
-                        <div class="footer-brand">
-                            <i class="fas fa-envelope-open-text"></i>
-                            <span>TempMail Professional</span>
-                        </div>
-                        <p class="footer-description">
-                            Secure, instant, and reliable temporary email service trusted by professionals worldwide.
-                        </p>
-                    </div>
-                    
-                    <!-- Footer Center - Google Ads -->
-                    <div class="col-md-4">
-                        <div class="footer-ad-section">
-                            <div class="footer-ad-container">
-                                <small class="ad-label">Advertisement</small>
-                                <div class="footer-ad-content">
-                                    <!-- Google Ads Footer Banner -->
-                                    <div class="footer-ad-placeholder">
-                                        <i class="fas fa-ad"></i>
-                                        <span>Google Ads Banner (728x90)</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Footer Right -->
-                    <div class="col-md-4">
-                        <div class="footer-links">
-                            <h6>Quick Links</h6>
-                            <ul>
-                                <li><a href="#"><i class="fas fa-user-shield"></i> Privacy Policy</a></li>
-                                <li><a href="#"><i class="fas fa-file-contract"></i> Terms of Service</a></li>
-                                <li><a href="#"><i class="fas fa-question"></i> FAQ</a></li>
-                                <li><a href="#"><i class="fas fa-envelope"></i> Contact</a></li>
-                            </ul>
+    <!-- Footer with Google Ads -->
+    <footer class="bg-gray-800 text-white mt-auto">
+        <div class="max-w-7xl mx-auto px-4 py-8">
+            <!-- Google Ads Banner in Footer -->
+            <div class="bg-gray-700 rounded-lg p-4 mb-6">
+                <div class="text-center text-gray-400">
+                    <small class="block mb-2">Advertisement</small>
+                    <div class="ad-container bg-gray-600 min-h-24">
+                        <div>
+                            <i class="fas fa-ad text-2xl mb-2"></i>
+                            <p class="text-sm">Google Ads Banner (728x90)</p>
                         </div>
                     </div>
                 </div>
-                
-                <div class="footer-bottom">
-                    <div class="row align-items-center">
-                        <div class="col-md-6">
-                            <p class="copyright">
-                                © 2024 TempMail Professional. All rights reserved.
+            </div>
+            
+            <div class="text-center">
+                <p class="text-gray-400">© 2024 TempMail Professional. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>
                             </p>
                         </div>
                         <div class="col-md-6 text-end">

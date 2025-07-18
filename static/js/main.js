@@ -26,14 +26,28 @@ document.addEventListener('DOMContentLoaded', function() {
     function showCopySuccess(button) {
         const originalContent = button.innerHTML;
         button.innerHTML = '<i class="fas fa-check"></i>';
-        button.classList.add('btn-success');
-        button.classList.remove('btn-outline-primary', 'btn-outline-success');
         
-        setTimeout(() => {
-            button.innerHTML = originalContent;
-            button.classList.remove('btn-success');
-            button.classList.add('btn-outline-primary');
-        }, 1000);
+        // Handle Tailwind CSS classes
+        if (button.classList.contains('bg-blue-600')) {
+            button.classList.remove('bg-blue-600', 'hover:bg-blue-700');
+            button.classList.add('bg-green-600');
+            
+            setTimeout(() => {
+                button.innerHTML = originalContent;
+                button.classList.remove('bg-green-600');
+                button.classList.add('bg-blue-600', 'hover:bg-blue-700');
+            }, 1000);
+        } else {
+            // Fallback for Bootstrap classes
+            button.classList.add('btn-success');
+            button.classList.remove('btn-outline-primary', 'btn-outline-success');
+            
+            setTimeout(() => {
+                button.innerHTML = originalContent;
+                button.classList.remove('btn-success');
+                button.classList.add('btn-outline-primary');
+            }, 1000);
+        }
     }
 
     // Fallback copy method for older browsers
@@ -83,13 +97,23 @@ document.addEventListener('DOMContentLoaded', function() {
         form.addEventListener('submit', function() {
             const button = this.querySelector('button[type="submit"]');
             const originalContent = button.innerHTML;
-            button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Generating...';
+            button.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Generating...';
             button.disabled = true;
+            
+            // Add loading state styling for Tailwind
+            if (button.classList.contains('bg-blue-600')) {
+                button.classList.remove('hover:bg-blue-700');
+                button.classList.add('opacity-75', 'cursor-not-allowed');
+            }
             
             // Re-enable after 5 seconds in case of error
             setTimeout(() => {
                 button.innerHTML = originalContent;
                 button.disabled = false;
+                button.classList.remove('opacity-75', 'cursor-not-allowed');
+                if (button.classList.contains('bg-blue-600')) {
+                    button.classList.add('hover:bg-blue-700');
+                }
             }, 5000);
         });
     });

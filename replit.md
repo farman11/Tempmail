@@ -2,11 +2,21 @@
 
 ## Overview
 
-TempMail is a Flask-based web application that provides users with temporary, disposable email addresses and phone numbers for privacy protection. The service allows anonymous access without registration, automatically manages service expiration, and includes spam filtering capabilities.
+TempMail is a Flask-based web application that provides users with temporary, disposable email addresses for privacy protection. The service features a modern Tailwind CSS interface with Gmail-style email formatting, Google Ads placement areas, and smooth user interactions. The service allows anonymous access without registration, automatically manages service expiration, and includes spam filtering capabilities.
+
+## Recent Changes
+
+✓ **2025-07-18**: Migrated from Bootstrap to Tailwind CSS framework
+✓ **2025-07-18**: Implemented Gmail-style email formatting and display
+✓ **2025-07-18**: Added Google Ads placement areas in left/right sidebars and footer
+✓ **2025-07-18**: Removed "Need Help" and "Quick Tools" sections for simplified UI
+✓ **2025-07-18**: Updated all button functionality with smooth transitions
+✓ **2025-07-18**: Enhanced copy-to-clipboard functionality with visual feedback
 
 ## User Preferences
 
 Preferred communication style: Simple, everyday language.
+UI Preferences: Tailwind CSS with simplified layout, Gmail-style email formatting, smooth transitions, Google Ads placement in sidebars and footer.
 
 ## System Architecture
 
@@ -21,9 +31,10 @@ Preferred communication style: Simple, everyday language.
 
 ### Frontend Architecture
 - **Template Engine**: Jinja2 (Flask's default)
-- **Styling**: Bootstrap 5 with dark theme
+- **Styling**: Tailwind CSS with custom utility classes and Gmail-inspired design
 - **JavaScript**: Vanilla JS for clipboard functionality and UI interactions
 - **Icons**: Font Awesome for consistent iconography
+- **Layout**: Three-column layout with Google Ads placement in left/right sidebars and footer
 
 ### Email System
 - **SMTP Integration**: Flask-Mail for outgoing email capabilities

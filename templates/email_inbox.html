@@ -3,118 +3,112 @@
 {% block title %}Email Inbox - {{ temp_email.email_address }}{% endblock %}
 
 {% block content %}
-<div class="container my-4">
+<div class="max-w-6xl mx-auto">
     <!-- Header -->
-    <div class="row mb-4">
-        <div class="col-md-8">
-            <h2>
-                <i class="fas fa-inbox"></i> Email Inbox
-            </h2>
-            <div class="card">
-                <div class="card-body">
-                    <h5 class="card-title">
-                        <code class="text-primary">{{ temp_email.email_address }}</code>
-                        <button class="btn btn-sm btn-outline-primary copy-btn ms-2" 
+    <div class="mb-8">
+        <div class="flex flex-col lg:flex-row lg:justify-between lg:items-start gap-6">
+            <div class="flex-1">
+                <h2 class="text-3xl font-bold text-gray-800 mb-4">
+                    <i class="fas fa-inbox mr-2"></i> Email Inbox
+                </h2>
+                <div class="bg-white rounded-lg shadow-lg p-6 gmail-style">
+                    <h5 class="text-lg font-semibold mb-3">
+                        <code class="bg-blue-50 text-blue-800 px-3 py-1 rounded font-mono text-sm">{{ temp_email.email_address }}</code>
+                        <button class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded ml-3 btn-transition copy-btn" 
                                 data-text="{{ temp_email.email_address }}">
-                            <i class="fas fa-copy"></i> Copy
+                            <i class="fas fa-copy mr-1"></i> Copy
                         </button>
                     </h5>
-                    <p class="card-text">
-                        <small class="text-muted">
-                            <i class="fas fa-clock"></i> 
-                            Expires: {{ temp_email.expires_at.strftime('%Y-%m-%d %H:%M UTC') }}
-                        </small>
+                    <p class="text-gray-600">
+                        <i class="fas fa-clock mr-1"></i> 
+                        Expires: {{ temp_email.expires_at.strftime('%Y-%m-%d %H:%M UTC') }}
                     </p>
                 </div>
             </div>
-        </div>
-        <div class="col-md-4 text-md-end">
-            <a href="{{ url_for('index') }}" class="btn btn-secondary mb-2">
-                <i class="fas fa-arrow-left"></i> Back to Home
-            </a>
-            <br>
-            <div class="btn-group">
-                {% if show_spam %}
-                    <a href="{{ url_for('email_inbox', email_id=temp_email.id) }}" 
-                       class="btn btn-sm btn-outline-success">
-                        <i class="fas fa-filter"></i> Hide Spam
-                    </a>
-                {% else %}
-                    <a href="{{ url_for('email_inbox', email_id=temp_email.id, show_spam=1) }}" 
-                       class="btn btn-sm btn-outline-warning">
-                        <i class="fas fa-exclamation-triangle"></i> Show Spam
-                    </a>
-                {% endif %}
-                <button class="btn btn-sm btn-outline-info refresh-btn" onclick="fetchNewEmails()">
-                    <i class="fas fa-sync-alt"></i> Check for New Emails
-                </button>
+            <div class="flex flex-col lg:items-end gap-3">
+                <a href="{{ url_for('index') }}" class="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded btn-transition">
+                    <i class="fas fa-arrow-left mr-1"></i> Back to Home
+                </a>
+                <div class="flex gap-2">
+                    {% if show_spam %}
+                        <a href="{{ url_for('email_inbox', email_id=temp_email.id) }}" 
+                           class="bg-green-600 hover:bg-green-700 text-white px-3 py-2 rounded btn-transition">
+                            <i class="fas fa-filter mr-1"></i> Hide Spam
+                        </a>
+                    {% else %}
+                        <a href="{{ url_for('email_inbox', email_id=temp_email.id, show_spam=1) }}" 
+                           class="bg-yellow-600 hover:bg-yellow-700 text-white px-3 py-2 rounded btn-transition">
+                            <i class="fas fa-exclamation-triangle mr-1"></i> Show Spam
+                        </a>
+                    {% endif %}
+                    <button class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded btn-transition refresh-btn" onclick="fetchNewEmails()">
+                        <i class="fas fa-sync-alt mr-1"></i> Refresh
+                    </button>
+                </div>
             </div>
         </div>
     </div>
 
     <!-- Messages -->
     {% if messages %}
-        <div class="row">
-            <div class="col-12">
-                <h4 class="mb-3">
-                    <i class="fas fa-envelope"></i> 
-                    Messages ({{ messages|length }})
-                </h4>
-                
+        <div class="mb-8">
+            <h4 class="text-2xl font-bold text-gray-800 mb-6">
+                <i class="fas fa-envelope mr-2"></i> 
+                Messages ({{ messages|length }})
+            </h4>
+            
+            <div class="space-y-4">
                 {% for message in messages %}
-                <div class="card mb-4 email-message {% if message.is_spam %}border-warning{% elif not message.is_read %}border-primary{% endif %}">
-                    <!-- Email Header -->
-                    <div class="card-header">
-                        <div class="row align-items-center">
-                            <div class="col-12 col-md-8">
-                                <div class="d-flex flex-wrap align-items-center gap-2">
-                                    <strong class="sender-email">{{ message.sender }}</strong>
-                                    {% if message.is_spam %}
-                                        <span class="badge bg-warning text-dark">
-                                            <i class="fas fa-exclamation-triangle"></i> SPAM
-                                        </span>
-                                    {% endif %}
-                                    {% if not message.is_read %}
-                                        <span class="badge bg-primary">
-                                            <i class="fas fa-circle"></i> NEW
-                                        </span>
-                                    {% endif %}
-                                </div>
+                <div class="bg-white rounded-lg shadow-lg gmail-style overflow-hidden
+                     {% if message.is_spam %}border-l-4 border-yellow-500{% elif not message.is_read %}border-l-4 border-blue-500{% endif %}">
+                    <!-- Gmail-style Email Header -->
+                    <div class="bg-gray-50 px-6 py-4 border-b border-gray-200">
+                        <div class="flex flex-col lg:flex-row lg:justify-between lg:items-center gap-3">
+                            <div class="flex flex-wrap items-center gap-3">
+                                <span class="font-semibold text-gray-800">{{ message.sender }}</span>
+                                {% if message.is_spam %}
+                                    <span class="bg-yellow-100 text-yellow-800 px-2 py-1 rounded-full text-xs font-medium">
+                                        <i class="fas fa-exclamation-triangle mr-1"></i> SPAM
+                                    </span>
+                                {% endif %}
+                                {% if not message.is_read %}
+                                    <span class="bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-xs font-medium">
+                                        <i class="fas fa-circle mr-1"></i> NEW
+                                    </span>
+                                {% endif %}
                             </div>
-                            <div class="col-12 col-md-4 text-md-end mt-2 mt-md-0">
-                                <small class="text-muted">
-                                    <i class="fas fa-clock"></i>
-                                    <span class="d-none d-sm-inline">{{ message.received_at.strftime('%Y-%m-%d %H:%M') }}</span>
-                                    <span class="d-sm-none">{{ message.received_at.strftime('%m/%d %H:%M') }}</span>
-                                </small>
+                            <div class="text-sm text-gray-600">
+                                <i class="fas fa-clock mr-1"></i>
+                                <span class="hidden sm:inline">{{ message.received_at.strftime('%Y-%m-%d %H:%M') }}</span>
+                                <span class="sm:hidden">{{ message.received_at.strftime('%m/%d %H:%M') }}</span>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Email Subject -->
-                    <div class="card-body">
-                        <h5 class="card-title email-subject mb-3">{{ message.subject or 'No Subject' }}</h5>
+                    <!-- Gmail-style Email Content -->
+                    <div class="p-6">
+                        <h5 class="text-xl font-semibold text-gray-800 mb-4">{{ message.subject or 'No Subject' }}</h5>
                         
-                        <!-- Email Content -->
-                        <div class="email-content">
+                        <!-- Gmail-style Email Body -->
+                        <div class="gmail-email-content">
                             {% if message.body %}
-                                <div class="email-body">{{ message.body|safe }}</div>
+                                <div class="email-body prose max-w-none">{{ message.body|safe }}</div>
                             {% else %}
-                                <em class="text-muted">No content available</em>
+                                <em class="text-gray-500">No content available</em>
                             {% endif %}
                         </div>
 
                         <!-- Action Buttons -->
-                        <div class="email-actions mt-3 d-flex flex-wrap gap-2">
+                        <div class="flex flex-wrap gap-3 mt-6 pt-4 border-t border-gray-200">
                             {% if not message.is_read %}
-                            <button class="btn btn-sm btn-outline-secondary mark-read-btn" 
+                            <button class="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded btn-transition mark-read-btn" 
                                     data-message-id="{{ message.id }}">
-                                <i class="fas fa-eye"></i> Mark as Read
+                                <i class="fas fa-eye mr-1"></i> Mark as Read
                             </button>
                             {% endif %}
-                            <button class="btn btn-sm btn-outline-primary copy-email-btn" 
+                            <button class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded btn-transition copy-email-btn" 
                                     data-content="{{ message.body|e }}">
-                                <i class="fas fa-copy"></i> Copy Content
+                                <i class="fas fa-copy mr-1"></i> Copy Content
                             </button>
                         </div>
                     </div>
@@ -123,37 +117,33 @@
             </div>
         </div>
     {% else %}
-        <div class="row">
-            <div class="col-12">
-                <div class="text-center py-5">
-                    <i class="fas fa-inbox fa-4x text-muted mb-3"></i>
-                    <h4 class="text-muted">No Messages Yet</h4>
-                    <p class="text-muted">
-                        {% if show_spam %}
-                            No spam messages found.
-                        {% else %}
-                            Your temporary inbox is empty. Messages will appear here when received.
-                        {% endif %}
-                    </p>
-                    <div class="btn-group">
-                        <button class="btn btn-outline-info refresh-btn">
-                            <i class="fas fa-sync-alt"></i> Check for New Messages
-                        </button>
-                        <a href="{{ url_for('add_test_email', email_id=temp_email.id) }}" 
-                           class="btn btn-outline-secondary">
-                            <i class="fas fa-plus"></i> Add Test Emails
-                        </a>
-                    </div>
-                </div>
+        <div class="bg-white rounded-lg shadow-lg p-12 text-center gmail-style">
+            <i class="fas fa-inbox text-6xl text-gray-400 mb-6"></i>
+            <h4 class="text-2xl font-semibold text-gray-600 mb-4">No Messages Yet</h4>
+            <p class="text-gray-500 mb-8">
+                {% if show_spam %}
+                    No spam messages found.
+                {% else %}
+                    Your temporary inbox is empty. Messages will appear here when received.
+                {% endif %}
+            </p>
+            <div class="flex flex-col sm:flex-row gap-3 justify-center">
+                <button class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded btn-transition refresh-btn" onclick="fetchNewEmails()">
+                    <i class="fas fa-sync-alt mr-2"></i> Check for New Messages
+                </button>
+                <a href="{{ url_for('add_test_email', email_id=temp_email.id) }}" 
+                   class="bg-gray-600 hover:bg-gray-700 text-white px-6 py-3 rounded btn-transition">
+                    <i class="fas fa-plus mr-2"></i> Add Test Emails
+                </a>
             </div>
         </div>
     {% endif %}
 
     <!-- Auto-refresh notice -->
-    <div class="row mt-4">
-        <div class="col-12">
-            <div class="alert alert-info">
-                <i class="fas fa-info-circle"></i>
+    <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mt-8">
+        <div class="flex items-center">
+            <i class="fas fa-info-circle text-blue-600 mr-2"></i>
+            <div class="text-blue-800">
                 <strong>Note:</strong> This inbox refreshes automatically every 30 seconds to check for new messages.
                 You can also click the refresh button to check manually.
             </div>
@@ -218,12 +208,14 @@ function fetchNewEmails() {
             if (data.new_emails > 0) {
                 location.reload(); // Reload to show new emails
             } else {
-                // Show success message
+                // Show success message with Tailwind styling
                 const alertDiv = document.createElement('div');
-                alertDiv.className = 'alert alert-info alert-dismissible fade show mt-3';
+                alertDiv.className = 'bg-blue-50 border border-blue-200 rounded-lg p-4 mt-3';
                 alertDiv.innerHTML = `
-                    <i class="fas fa-info-circle"></i> No new emails found.
-                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    <div class="flex items-center">
+                        <i class="fas fa-info-circle text-blue-600 mr-2"></i>
+                        <span class="text-blue-800">No new emails found.</span>
+                    </div>
                 `;
                 button.parentNode.insertBefore(alertDiv, button.nextSibling);
                 
@@ -250,25 +242,22 @@ function fetchNewEmails() {
 
 // Copy email content functionality
 document.addEventListener('DOMContentLoaded', function() {
-    // Show ads overlay if parameter is present
-    const urlParams = new URLSearchParams(window.location.search);
-    if (urlParams.get('show_ads') === 'true') {
-        showAdOverlay();
-    }
-    
-    document.querySelectorAll('.copy-email-btn').forEach(button => {
+    // Copy button functionality for both email content and email addresses
+    document.querySelectorAll('.copy-btn, .copy-email-btn').forEach(button => {
         button.addEventListener('click', function() {
-            const content = this.getAttribute('data-content');
+            const content = this.getAttribute('data-content') || this.getAttribute('data-text');
             const originalContent = this.innerHTML;
             
             navigator.clipboard.writeText(content).then(() => {
-                // Show success feedback
-                this.innerHTML = '<i class="fas fa-check"></i> Copied!';
-                this.classList.add('copied');
+                // Show success feedback with Tailwind styling
+                this.innerHTML = '<i class="fas fa-check mr-1"></i> Copied!';
+                this.classList.remove('bg-blue-600', 'hover:bg-blue-700');
+                this.classList.add('bg-green-600');
                 
                 setTimeout(() => {
                     this.innerHTML = originalContent;
-                    this.classList.remove('copied');
+                    this.classList.remove('bg-green-600');
+                    this.classList.add('bg-blue-600', 'hover:bg-blue-700');
                 }, 2000);
             }).catch(err => {
                 console.error('Could not copy text: ', err);
@@ -281,12 +270,14 @@ document.addEventListener('DOMContentLoaded', function() {
                 document.body.removeChild(textArea);
                 
                 // Show success feedback
-                this.innerHTML = '<i class="fas fa-check"></i> Copied!';
-                this.classList.add('copied');
+                this.innerHTML = '<i class="fas fa-check mr-1"></i> Copied!';
+                this.classList.remove('bg-blue-600', 'hover:bg-blue-700');
+                this.classList.add('bg-green-600');
                 
                 setTimeout(() => {
                     this.innerHTML = originalContent;
-                    this.classList.remove('copied');
+                    this.classList.remove('bg-green-600');
+                    this.classList.add('bg-blue-600', 'hover:bg-blue-700');
                 }, 2000);
             });
         });
@@ -324,50 +315,5 @@ document.addEventListener('DOMContentLoaded', function() {
         emailBody.innerHTML = content;
     });
 });
-
-function showAdOverlay() {
-    const overlay = document.createElement('div');
-    overlay.className = 'ad-overlay';
-    
-    const modal = document.createElement('div');
-    modal.className = 'ad-modal';
-    
-    modal.innerHTML = `
-        <h3><i class="fas fa-bullhorn"></i> Advertisement</h3>
-        <div class="ad-content">
-            <i class="fas fa-ad" style="font-size: 3rem; margin-bottom: 20px; opacity: 0.5;"></i>
-            <p>Your Google Ads will appear here</p>
-            <small>Premium ad space for maximum visibility</small>
-        </div>
-        <div class="countdown">
-            <i class="fas fa-clock"></i> <span id="countdown">2</span>s
-        </div>
-    `;
-    
-    overlay.appendChild(modal);
-    document.body.appendChild(overlay);
-    
-    let countdown = 2;
-    const countdownElement = document.getElementById('countdown');
-    
-    const timer = setInterval(() => {
-        countdown--;
-        countdownElement.textContent = countdown;
-        
-        if (countdown <= 0) {
-            clearInterval(timer);
-            overlay.style.animation = 'fadeOut 0.3s ease-out';
-            setTimeout(() => {
-                if (overlay.parentNode) {
-                    document.body.removeChild(overlay);
-                }
-                // Remove the parameter from URL
-                const url = new URL(window.location);
-                url.searchParams.delete('show_ads');
-                window.history.replaceState({}, '', url);
-            }, 300);
-        }
-    }, 1000);
-}
 </script>
 {% endblock %}
