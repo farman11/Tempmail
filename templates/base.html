@@ -1,34 +1,56 @@
 <!DOCTYPE html>
-<html lang="en" data-bs-theme="dark">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}TempMail - Temporary Email Service{% endblock %}</title>
+    <title>{% block title %}TempMail - Professional Temporary Email Service{% endblock %}</title>
     
     <!-- Bootstrap CSS -->
-    <link href="https://cdn.replit.com/agent/bootstrap-agent-dark-theme.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
     <!-- Custom CSS -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/custom.css') }}">
 </head>
-<body>
-    <!-- Navigation -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-        <div class="container">
-            <a class="navbar-brand" href="{{ url_for('index') }}">
-                <i class="fas fa-shield-alt"></i> TempMail
+<body class="professional-layout">
+    <!-- Header Navigation -->
+    <nav class="navbar navbar-expand-lg professional-navbar fixed-top">
+        <div class="container-fluid">
+            <a class="navbar-brand professional-brand" href="{{ url_for('index') }}">
+                <i class="fas fa-envelope-open-text me-2"></i>
+                <span class="brand-text">TempMail</span>
+                <small class="brand-subtitle">Professional</small>
             </a>
+            
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
             </button>
+            
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('index') }}">
-                            <i class="fas fa-home"></i> Home
+                        <a class="nav-link professional-nav-link" href="{{ url_for('index') }}">
+                            <i class="fas fa-home me-1"></i> Home
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link professional-nav-link" href="#features">
+                            <i class="fas fa-star me-1"></i> Features
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link professional-nav-link" href="#security">
+                            <i class="fas fa-shield-alt me-1"></i> Security
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link professional-nav-link" href="#help">
+                            <i class="fas fa-question-circle me-1"></i> Help
                         </a>
                     </li>
                 </ul>
@@ -36,38 +58,177 @@
         </div>
     </nav>
 
-    <!-- Flash Messages -->
-    {% with messages = get_flashed_messages(with_categories=true) %}
-        {% if messages %}
-            <div class="container mt-3">
-                {% for category, message in messages %}
-                    <div class="alert alert-{{ 'danger' if category == 'error' else category }} alert-dismissible fade show" role="alert">
-                        {{ message }}
-                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    <!-- Main Layout Container -->
+    <div class="main-layout-container">
+        <!-- Left Sidebar -->
+        <aside class="left-sidebar">
+            <div class="sidebar-content">
+                <div class="sidebar-header">
+                    <h6 class="sidebar-title">
+                        <i class="fas fa-tools me-2"></i>Quick Tools
+                    </h6>
+                </div>
+                
+                <div class="sidebar-section">
+                    <div class="quick-action-card">
+                        <i class="fas fa-plus-circle text-primary"></i>
+                        <h6>Generate Email</h6>
+                        <p>Create instant email address</p>
+                        <a href="{{ url_for('index') }}" class="btn btn-outline-primary btn-sm">
+                            <i class="fas fa-arrow-right"></i>
+                        </a>
                     </div>
-                {% endfor %}
+                </div>
+                
+                <div class="sidebar-section">
+                    <div class="stats-card">
+                        <h6><i class="fas fa-chart-line me-2"></i>Service Stats</h6>
+                        <div class="stat-item">
+                            <span class="stat-number">99.9%</span>
+                            <span class="stat-label">Uptime</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-number">< 1s</span>
+                            <span class="stat-label">Email Delivery</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-number">24/7</span>
+                            <span class="stat-label">Available</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="sidebar-section">
+                    <div class="feature-highlight">
+                        <i class="fas fa-shield-check text-success"></i>
+                        <h6>Enterprise Security</h6>
+                        <p>Bank-level encryption for all emails</p>
+                    </div>
+                </div>
             </div>
-        {% endif %}
-    {% endwith %}
+        </aside>
 
-    <!-- Main Content -->
-    <main>
-        {% block content %}{% endblock %}
-    </main>
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <div class="content-wrapper">
+                {% block content %}{% endblock %}
+            </div>
+        </main>
+
+        <!-- Right Sidebar -->
+        <aside class="right-sidebar">
+            <div class="sidebar-content">
+                <div class="sidebar-header">
+                    <h6 class="sidebar-title">
+                        <i class="fas fa-info-circle me-2"></i>Information
+                    </h6>
+                </div>
+                
+                <!-- Google Ads Placeholder -->
+                <div class="sidebar-section">
+                    <div class="ad-container">
+                        <div class="ad-header">
+                            <small class="text-muted">Advertisement</small>
+                        </div>
+                        <div class="ad-content">
+                            <!-- Google Ads code will go here -->
+                            <div class="ad-placeholder">
+                                <i class="fas fa-bullhorn"></i>
+                                <p>Google Ads</p>
+                                <small>300x250 Ad Space</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="sidebar-section">
+                    <div class="help-card">
+                        <h6><i class="fas fa-question-circle me-2"></i>Need Help?</h6>
+                        <ul class="help-links">
+                            <li><a href="#"><i class="fas fa-book"></i> Documentation</a></li>
+                            <li><a href="#"><i class="fas fa-video"></i> Video Tutorials</a></li>
+                            <li><a href="#"><i class="fas fa-envelope"></i> Contact Support</a></li>
+                            <li><a href="#"><i class="fas fa-comments"></i> Live Chat</a></li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="sidebar-section">
+                    <div class="security-info">
+                        <h6><i class="fas fa-lock me-2"></i>Your Privacy</h6>
+                        <ul class="security-features">
+                            <li><i class="fas fa-check text-success"></i> No data stored</li>
+                            <li><i class="fas fa-check text-success"></i> Auto-deletion</li>
+                            <li><i class="fas fa-check text-success"></i> SSL encrypted</li>
+                            <li><i class="fas fa-check text-success"></i> GDPR compliant</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </aside>
+    </div>
 
     <!-- Footer -->
-    <footer class="bg-dark text-light py-4 mt-5">
-        <div class="container">
-            <div class="row">
-                <div class="col-md-6">
-                    <h5><i class="fas fa-shield-alt"></i> TempMail</h5>
-                    <p class="mb-0">Protecting your privacy with temporary email addresses.</p>
+    <footer class="professional-footer">
+        <div class="footer-content">
+            <div class="container-fluid">
+                <div class="row">
+                    <!-- Footer Left -->
+                    <div class="col-md-4">
+                        <div class="footer-brand">
+                            <i class="fas fa-envelope-open-text"></i>
+                            <span>TempMail Professional</span>
+                        </div>
+                        <p class="footer-description">
+                            Secure, instant, and reliable temporary email service trusted by professionals worldwide.
+                        </p>
+                    </div>
+                    
+                    <!-- Footer Center - Google Ads -->
+                    <div class="col-md-4">
+                        <div class="footer-ad-section">
+                            <div class="footer-ad-container">
+                                <small class="ad-label">Advertisement</small>
+                                <div class="footer-ad-content">
+                                    <!-- Google Ads Footer Banner -->
+                                    <div class="footer-ad-placeholder">
+                                        <i class="fas fa-ad"></i>
+                                        <span>Google Ads Banner (728x90)</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Footer Right -->
+                    <div class="col-md-4">
+                        <div class="footer-links">
+                            <h6>Quick Links</h6>
+                            <ul>
+                                <li><a href="#"><i class="fas fa-user-shield"></i> Privacy Policy</a></li>
+                                <li><a href="#"><i class="fas fa-file-contract"></i> Terms of Service</a></li>
+                                <li><a href="#"><i class="fas fa-question"></i> FAQ</a></li>
+                                <li><a href="#"><i class="fas fa-envelope"></i> Contact</a></li>
+                            </ul>
+                        </div>
+                    </div>
                 </div>
-                <div class="col-md-6 text-md-end">
-                    <p class="mb-0">
-                        <i class="fas fa-info-circle"></i> 
-                        No registration required • Automatic expiration • Privacy focused
-                    </p>
+                
+                <div class="footer-bottom">
+                    <div class="row align-items-center">
+                        <div class="col-md-6">
+                            <p class="copyright">
+                                © 2024 TempMail Professional. All rights reserved.
+                            </p>
+                        </div>
+                        <div class="col-md-6 text-end">
+                            <div class="social-links">
+                                <a href="#"><i class="fab fa-twitter"></i></a>
+                                <a href="#"><i class="fab fa-linkedin"></i></a>
+                                <a href="#"><i class="fab fa-github"></i></a>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -75,9 +236,6 @@
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    
-    <!-- Custom JS -->
-    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
     
     {% block scripts %}{% endblock %}
 </body>
