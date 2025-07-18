@@ -173,11 +173,14 @@ document.querySelectorAll('.mark-read-btn').forEach(button => {
     });
 });
 
-// Refresh button
-document.querySelector('.refresh-btn').addEventListener('click', function() {
-    this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Refreshing...';
-    location.reload();
-});
+// Refresh button - only if it exists
+const refreshBtn = document.querySelector('.refresh-btn');
+if (refreshBtn) {
+    refreshBtn.addEventListener('click', function() {
+        this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Refreshing...';
+        location.reload();
+    });
+}
 
 // Function to fetch new emails
 function fetchNewEmails() {

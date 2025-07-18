@@ -2,8 +2,6 @@ import requests
 import json
 import logging
 from datetime import datetime, timedelta
-from app import db
-from models import TempEmail, EmailMessage
 import hashlib
 
 class MailTMService:
@@ -22,9 +20,25 @@ class MailTMService:
         try:
             response = self.session.get(f"{self.base_url}/domains")
             if response.status_code == 200:
-                domains = response.json()['hydra:member']
-                return [domain['domain'] for domain in domains]
-            return []
+                data = response.json()
+                logging.debug(f"Domains response: {data}")
+                
+                # Handle different response formats
+                if isinstance(data, list):
+                    return [domain['domain'] for domain in data if 'domain' in domain]
+                elif isinstance(data, dict):
+                    if 'hydra:member' in data:
+                        return [domain['domain'] for domain in data['hydra:member']]
+                    elif 'domains' in data:
+                        return [domain['domain'] for domain in data['domains']]
+                    elif 'data' in data:
+                        return [domain['domain'] for domain in data['data']]
+                
+                logging.error(f"Unexpected response format: {data}")
+                return []
+            else:
+                logging.error(f"Failed to get domains: {response.status_code} - {response.text}")
+                return []
         except Exception as e:
             logging.error(f"Error getting domains: {e}")
             return []
@@ -89,7 +103,7 @@ class MailTMService:
             logging.error(f"Error getting message details: {e}")
             return None
     
-    def create_real_temp_email(self, session_id):
+    def create_real_temp_email(self, session_id, db, TempEmail):
         """Create a real temporary email using mail.tm"""
         try:
             domains = self.get_available_domains()
@@ -134,7 +148,7 @@ class MailTMService:
             logging.error(f"Error creating real temp email: {e}")
             return None
     
-    def fetch_emails_for_account(self, temp_email):
+    def fetch_emails_for_account(self, temp_email, db, EmailMessage):
         """Fetch new emails for a specific temp email account"""
         try:
             if not hasattr(temp_email, 'mail_tm_password'):
@@ -191,7 +205,7 @@ class MailTMService:
             logging.error(f"Error fetching emails: {e}")
             return 0
     
-    def fetch_all_emails(self):
+    def fetch_all_emails(self, db, TempEmail, EmailMessage):
         """Fetch emails for all active temp email accounts"""
         try:
             active_emails = TempEmail.query.filter_by(is_active=True).filter(
@@ -201,7 +215,7 @@ class MailTMService:
             total_new = 0
             for temp_email in active_emails:
                 if hasattr(temp_email, 'mail_tm_password'):
-                    new_count = self.fetch_emails_for_account(temp_email)
+                    new_count = self.fetch_emails_for_account(temp_email, db, EmailMessage)
                     total_new += new_count
             
             return total_new

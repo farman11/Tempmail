@@ -41,12 +41,16 @@ def generate_email():
         return redirect(url_for('index'))
     
     # Create new temporary email using mail.tm service
-    temp_email = mail_tm_service.create_real_temp_email(session_id)
+    temp_email = mail_tm_service.create_real_temp_email(session_id, db, TempEmail)
     
     if temp_email:
         flash(f'Real temporary email created: {temp_email.email_address}', 'success')
     else:
-        flash('Error creating temporary email. Please try again.', 'error')
+        # Fallback to local email if mail.tm fails
+        temp_email = TempEmail(session_id=session_id, use_real_email=False)
+        db.session.add(temp_email)
+        db.session.commit()
+        flash(f'Temporary email created: {temp_email.email_address} (Demo mode)', 'warning')
     
     return redirect(url_for('index'))
 
@@ -69,7 +73,7 @@ def email_inbox(email_id):
     
     # Fetch new emails from mail.tm before displaying
     if hasattr(temp_email, 'mail_tm_password') and temp_email.mail_tm_password:
-        mail_tm_service.fetch_emails_for_account(temp_email)
+        mail_tm_service.fetch_emails_for_account(temp_email, db, EmailMessage)
     
     # Get messages (filter out spam unless requested)
     show_spam = request.args.get('show_spam', False)
@@ -324,7 +328,7 @@ def email_webhook():
 def fetch_emails():
     """Manually trigger email fetching for all accounts"""
     try:
-        new_emails = mail_tm_service.fetch_all_emails()
+        new_emails = mail_tm_service.fetch_all_emails(db, TempEmail, EmailMessage)
         return jsonify({
             'status': 'success',
             'new_emails': new_emails,
