@@ -85,7 +85,24 @@ class MailTMService:
             headers = {'Authorization': f'Bearer {token}'}
             response = self.session.get(f"{self.base_url}/messages", headers=headers)
             if response.status_code == 200:
-                return response.json()['hydra:member']
+                data = response.json()
+                logging.debug(f"Messages response: {data}")
+                
+                # Handle different response formats
+                if isinstance(data, list):
+                    return data
+                elif isinstance(data, dict):
+                    if 'hydra:member' in data:
+                        return data['hydra:member']
+                    elif '@graph' in data:
+                        return data['@graph']
+                    elif 'messages' in data:
+                        return data['messages']
+                    elif 'data' in data:
+                        return data['data']
+                
+                logging.error(f"Unexpected messages response format: {data}")
+                return []
             else:
                 logging.error(f"Failed to get messages: {response.text}")
                 return []
