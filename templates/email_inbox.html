@@ -1,0 +1,176 @@
+{% extends "base.html" %}
+
+{% block title %}Email Inbox - {{ temp_email.email_address }}{% endblock %}
+
+{% block content %}
+<div class="container my-4">
+    <!-- Header -->
+    <div class="row mb-4">
+        <div class="col-md-8">
+            <h2>
+                <i class="fas fa-inbox"></i> Email Inbox
+            </h2>
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">
+                        <code class="text-primary">{{ temp_email.email_address }}</code>
+                        <button class="btn btn-sm btn-outline-primary copy-btn ms-2" 
+                                data-text="{{ temp_email.email_address }}">
+                            <i class="fas fa-copy"></i> Copy
+                        </button>
+                    </h5>
+                    <p class="card-text">
+                        <small class="text-muted">
+                            <i class="fas fa-clock"></i> 
+                            Expires: {{ temp_email.expires_at.strftime('%Y-%m-%d %H:%M UTC') }}
+                        </small>
+                    </p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 text-md-end">
+            <a href="{{ url_for('index') }}" class="btn btn-secondary mb-2">
+                <i class="fas fa-arrow-left"></i> Back to Home
+            </a>
+            <br>
+            <div class="btn-group">
+                {% if show_spam %}
+                    <a href="{{ url_for('email_inbox', email_id=temp_email.id) }}" 
+                       class="btn btn-sm btn-outline-success">
+                        <i class="fas fa-filter"></i> Hide Spam
+                    </a>
+                {% else %}
+                    <a href="{{ url_for('email_inbox', email_id=temp_email.id, show_spam=1) }}" 
+                       class="btn btn-sm btn-outline-warning">
+                        <i class="fas fa-exclamation-triangle"></i> Show Spam
+                    </a>
+                {% endif %}
+                <button class="btn btn-sm btn-outline-info refresh-btn">
+                    <i class="fas fa-sync-alt"></i> Refresh
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Messages -->
+    {% if messages %}
+        <div class="row">
+            <div class="col-12">
+                <h4 class="mb-3">
+                    <i class="fas fa-envelope"></i> 
+                    Messages ({{ messages|length }})
+                </h4>
+                
+                {% for message in messages %}
+                <div class="card mb-3 {% if message.is_spam %}border-warning{% elif not message.is_read %}border-primary{% endif %}">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <div>
+                            <strong>{{ message.sender }}</strong>
+                            {% if message.is_spam %}
+                                <span class="badge bg-warning text-dark ms-2">
+                                    <i class="fas fa-exclamation-triangle"></i> SPAM
+                                </span>
+                            {% endif %}
+                            {% if not message.is_read %}
+                                <span class="badge bg-primary ms-2">
+                                    <i class="fas fa-circle"></i> NEW
+                                </span>
+                            {% endif %}
+                        </div>
+                        <small class="text-muted">
+                            {{ message.received_at.strftime('%Y-%m-%d %H:%M') }}
+                        </small>
+                    </div>
+                    <div class="card-body">
+                        {% if message.subject %}
+                        <h6 class="card-title">{{ message.subject }}</h6>
+                        {% endif %}
+                        
+                        <div class="message-body">
+                            {% if message.body %}
+                                <pre class="text-wrap">{{ message.body }}</pre>
+                            {% else %}
+                                <em class="text-muted">No message body</em>
+                            {% endif %}
+                        </div>
+                        
+                        {% if not message.is_read %}
+                        <button class="btn btn-sm btn-outline-primary mark-read-btn mt-2" 
+                                data-message-id="{{ message.id }}">
+                            <i class="fas fa-check"></i> Mark as Read
+                        </button>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    {% else %}
+        <div class="row">
+            <div class="col-12">
+                <div class="text-center py-5">
+                    <i class="fas fa-inbox fa-4x text-muted mb-3"></i>
+                    <h4 class="text-muted">No Messages Yet</h4>
+                    <p class="text-muted">
+                        {% if show_spam %}
+                            No spam messages found.
+                        {% else %}
+                            Your temporary inbox is empty. Messages will appear here when received.
+                        {% endif %}
+                    </p>
+                    <button class="btn btn-outline-info refresh-btn">
+                        <i class="fas fa-sync-alt"></i> Check for New Messages
+                    </button>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+
+    <!-- Auto-refresh notice -->
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="alert alert-info">
+                <i class="fas fa-info-circle"></i>
+                <strong>Note:</strong> This inbox refreshes automatically every 30 seconds to check for new messages.
+                You can also click the refresh button to check manually.
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+// Auto-refresh every 30 seconds
+setInterval(function() {
+    location.reload();
+}, 30000);
+
+// Mark message as read
+document.querySelectorAll('.mark-read-btn').forEach(button => {
+    button.addEventListener('click', function() {
+        const messageId = this.dataset.messageId;
+        
+        fetch(`/mark-read/${messageId}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'success') {
+                location.reload();
+            }
+        })
+        .catch(error => console.error('Error:', error));
+    });
+});
+
+// Refresh button
+document.querySelector('.refresh-btn').addEventListener('click', function() {
+    this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Refreshing...';
+    location.reload();
+});
+</script>
+{% endblock %}

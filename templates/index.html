@@ -1,0 +1,131 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container my-5">
+    <!-- Hero Section -->
+    <div class="row text-center mb-5">
+        <div class="col-lg-8 mx-auto">
+            <h1 class="display-4 mb-3">
+                <i class="fas fa-shield-alt text-primary"></i> 
+                Temporary Email Service
+            </h1>
+            <p class="lead">
+                Protect your privacy with disposable email addresses. 
+                No registration required, automatic expiration, completely anonymous.
+            </p>
+        </div>
+    </div>
+
+    <!-- Service Generation Cards -->
+    <div class="row mb-5">
+        <!-- Email Generation -->
+        <div class="col-lg-8 mx-auto">
+            <div class="card">
+                <div class="card-body text-center">
+                    <i class="fas fa-envelope fa-3x text-primary mb-3"></i>
+                    <h4 class="card-title">Temporary Email</h4>
+                    <p class="card-text">
+                        Generate disposable email addresses that self-destruct after 24 hours. 
+                        Perfect for sign-ups and avoiding spam. No registration required.
+                    </p>
+                    <form method="POST" action="{{ url_for('generate_email') }}">
+                        <button type="submit" class="btn btn-primary btn-lg">
+                            <i class="fas fa-plus"></i> Generate Email
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Active Services -->
+    {% if active_emails %}
+    <div class="row">
+        <div class="col-12">
+            <h3 class="mb-4">
+                <i class="fas fa-list"></i> Your Active Email Addresses
+            </h3>
+        </div>
+
+        <!-- Active Emails -->
+        <div class="col-12 mb-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-envelope"></i> 
+                        Temporary Emails ({{ active_emails|length }}/5)
+                    </h5>
+                </div>
+                <div class="card-body p-0">
+                    {% for email in active_emails %}
+                    <div class="d-flex justify-content-between align-items-center p-3 border-bottom">
+                        <div class="flex-grow-1">
+                            <code class="text-primary">{{ email.email_address }}</code>
+                            <br>
+                            <small class="text-muted">
+                                <i class="fas fa-clock"></i> 
+                                Expires: {{ email.expires_at.strftime('%Y-%m-%d %H:%M') }}
+                            </small>
+                            {% if email.messages %}
+                            <br>
+                            <small class="text-info">
+                                <i class="fas fa-envelope"></i> 
+                                {{ email.messages|length }} message(s)
+                            </small>
+                            {% endif %}
+                        </div>
+                        <div class="btn-group">
+                            <button class="btn btn-sm btn-outline-primary copy-btn" 
+                                    data-text="{{ email.email_address }}">
+                                <i class="fas fa-copy"></i>
+                            </button>
+                            <a href="{{ url_for('email_inbox', email_id=email.id) }}" 
+                               class="btn btn-sm btn-outline-info">
+                                <i class="fas fa-inbox"></i>
+                            </a>
+                            <form method="POST" action="{{ url_for('delete_email', email_id=email.id) }}" 
+                                  style="display: inline;">
+                                <button type="submit" class="btn btn-sm btn-outline-danger"
+                                        onclick="return confirm('Delete this email address?')">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Features Section -->
+    <div class="row mt-5">
+        <div class="col-12">
+            <h3 class="text-center mb-4">
+                <i class="fas fa-star"></i> Why Choose TempMail?
+            </h3>
+        </div>
+        <div class="col-md-3 text-center mb-3">
+            <i class="fas fa-user-secret fa-2x text-primary mb-2"></i>
+            <h5>Anonymous</h5>
+            <p class="text-muted">No registration required. Complete anonymity.</p>
+        </div>
+        <div class="col-md-3 text-center mb-3">
+            <i class="fas fa-clock fa-2x text-warning mb-2"></i>
+            <h5>Auto-Expire</h5>
+            <p class="text-muted">Email addresses automatically expire after 24 hours.</p>
+        </div>
+        <div class="col-md-3 text-center mb-3">
+            <i class="fas fa-shield-alt fa-2x text-success mb-2"></i>
+            <h5>Spam Protection</h5>
+            <p class="text-muted">Built-in spam filtering keeps your inbox clean.</p>
+        </div>
+        <div class="col-md-3 text-center mb-3">
+            <i class="fas fa-copy fa-2x text-info mb-2"></i>
+            <h5>Easy Copy</h5>
+            <p class="text-muted">One-click copy to clipboard for quick use.</p>
+        </div>
+    </div>
+</div>
+{% endblock %}
