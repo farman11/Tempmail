@@ -99,6 +99,108 @@
     </div>
     {% endif %}
 
+    <!-- Verification Code Testing Section -->
+    {% if active_emails %}
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card border-info">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-code"></i> Test Verification Codes
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <p class="text-muted mb-3">
+                        Simulate receiving verification codes from services. This is useful for testing signup processes.
+                    </p>
+                    <form id="verification-form">
+                        <div class="row">
+                            <div class="col-md-4 mb-3">
+                                <label for="email-select" class="form-label">Email Address</label>
+                                <select class="form-select" id="email-select" required>
+                                    <option value="">Select an email...</option>
+                                    {% for email in active_emails %}
+                                    <option value="{{ email.email_address }}">{{ email.email_address }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <label for="service-name" class="form-label">Service Name</label>
+                                <input type="text" class="form-control" id="service-name" 
+                                       placeholder="e.g. Facebook, Google" required>
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <label for="verification-code" class="form-label">Verification Code</label>
+                                <input type="text" class="form-control" id="verification-code" 
+                                       placeholder="e.g. 123456" required>
+                            </div>
+                            <div class="col-md-2 mb-3">
+                                <label class="form-label">&nbsp;</label>
+                                <button type="submit" class="btn btn-info w-100">
+                                    <i class="fas fa-paper-plane"></i> Send Code
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Manual Email Receiving Section -->
+    {% if active_emails %}
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card border-warning">
+                <div class="card-header bg-warning text-dark">
+                    <h5 class="mb-0">
+                        <i class="fas fa-envelope-open"></i> Manual Email Receiver
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <p class="text-muted mb-3">
+                        Manually add emails to your temporary inbox for testing purposes.
+                    </p>
+                    <form method="POST" action="{{ url_for('receive_email') }}">
+                        <div class="row">
+                            <div class="col-md-3 mb-3">
+                                <label for="to_email" class="form-label">To Email</label>
+                                <select class="form-select" name="to_email" required>
+                                    <option value="">Select recipient...</option>
+                                    {% for email in active_emails %}
+                                    <option value="{{ email.email_address }}">{{ email.email_address }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <label for="from_email" class="form-label">From Email</label>
+                                <input type="email" class="form-control" name="from_email" 
+                                       placeholder="sender@example.com" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="subject" class="form-label">Subject</label>
+                                <input type="text" class="form-control" name="subject" 
+                                       placeholder="Email subject">
+                            </div>
+                            <div class="col-12 mb-3">
+                                <label for="body" class="form-label">Message Body</label>
+                                <textarea class="form-control" name="body" rows="3" 
+                                          placeholder="Email content..."></textarea>
+                            </div>
+                            <div class="col-12">
+                                <button type="submit" class="btn btn-warning">
+                                    <i class="fas fa-inbox"></i> Receive Email
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
     <!-- Features Section -->
     <div class="row mt-5">
         <div class="col-12">
@@ -128,4 +230,62 @@
         </div>
     </div>
 </div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+// Handle verification code form
+document.getElementById('verification-form').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const email = document.getElementById('email-select').value;
+    const service = document.getElementById('service-name').value;
+    const code = document.getElementById('verification-code').value;
+    
+    if (!email || !service || !code) {
+        alert('Please fill in all fields');
+        return;
+    }
+    
+    // Send verification code via API
+    fetch('/api/simulate-verification', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            email: email,
+            service: service,
+            code: code
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.status === 'success') {
+            // Show success message
+            const alertDiv = document.createElement('div');
+            alertDiv.className = 'alert alert-success alert-dismissible fade show mt-3';
+            alertDiv.innerHTML = `
+                <i class="fas fa-check-circle"></i> Verification code sent to ${email}!
+                <a href="/email-inbox/${data.email_id}" class="btn btn-sm btn-outline-success ms-3">
+                    <i class="fas fa-inbox"></i> View Inbox
+                </a>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            `;
+            
+            // Insert after the form
+            this.parentNode.insertBefore(alertDiv, this.nextSibling);
+            
+            // Reset form
+            this.reset();
+        } else {
+            alert('Error: ' + (data.error || 'Unknown error'));
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Error sending verification code');
+    });
+});
+</script>
 {% endblock %}

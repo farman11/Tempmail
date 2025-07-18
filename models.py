@@ -12,7 +12,9 @@ class TempEmail(db.Model):
     
     def __init__(self, session_id, hours=24):
         self.session_id = session_id
-        self.email_address = f"{uuid.uuid4().hex[:12]}@tempmail.local"
+        # Use a more realistic domain for testing
+        domain = "tempmail.replit.app"  # This can be configured later
+        self.email_address = f"{uuid.uuid4().hex[:12]}@{domain}"
         self.expires_at = datetime.utcnow() + timedelta(hours=hours)
     
     @property

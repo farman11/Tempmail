@@ -5,6 +5,7 @@ from models import TempEmail, EmailMessage
 from utils import is_spam_email
 from datetime import datetime
 import logging
+import re
 
 @app.before_request
 def ensure_session():
@@ -167,6 +168,106 @@ def add_test_email(email_id):
     db.session.commit()
     flash('Test emails added successfully!', 'success')
     return redirect(url_for('email_inbox', email_id=email_id))
+
+
+# Route to manually add received email (for testing real services)
+@app.route('/receive-email', methods=['POST'])
+def receive_email():
+    """Manually receive an email for testing purposes"""
+    try:
+        # Get form data
+        to_email = request.form.get('to_email', '').strip()
+        from_email = request.form.get('from_email', '').strip()
+        subject = request.form.get('subject', '').strip()
+        body = request.form.get('body', '').strip()
+        
+        if not to_email or not from_email:
+            flash('To and From email addresses are required', 'error')
+            return redirect(url_for('index'))
+        
+        # Find the temporary email
+        temp_email = TempEmail.query.filter_by(
+            email_address=to_email, 
+            is_active=True
+        ).filter(TempEmail.expires_at > datetime.utcnow()).first()
+        
+        if not temp_email:
+            flash(f'Temporary email {to_email} not found or expired', 'error')
+            return redirect(url_for('index'))
+        
+        # Check for spam
+        spam_check = is_spam_email(from_email, subject, body)
+        
+        # Create message
+        message = EmailMessage(
+            temp_email_id=temp_email.id,
+            sender=from_email,
+            subject=subject,
+            body=body,
+            is_spam=spam_check
+        )
+        
+        db.session.add(message)
+        db.session.commit()
+        
+        flash(f'Email received successfully! {"(Marked as spam)" if spam_check else ""}', 'success')
+        return redirect(url_for('email_inbox', email_id=temp_email.id))
+        
+    except Exception as e:
+        logging.error(f"Manual email receive error: {e}")
+        flash('Error receiving email', 'error')
+        return redirect(url_for('index'))
+
+
+# API endpoint to simulate receiving verification codes
+@app.route('/api/simulate-verification', methods=['POST'])
+def simulate_verification():
+    """API endpoint to simulate receiving verification codes from services"""
+    try:
+        data = request.get_json()
+        if not data:
+            return jsonify({'error': 'No JSON data provided'}), 400
+            
+        to_email = data.get('email')
+        service_name = data.get('service', 'Unknown Service')
+        code = data.get('code')
+        
+        if not to_email or not code:
+            return jsonify({'error': 'Email and code are required'}), 400
+        
+        # Find the temporary email
+        temp_email = TempEmail.query.filter_by(
+            email_address=to_email, 
+            is_active=True
+        ).filter(TempEmail.expires_at > datetime.utcnow()).first()
+        
+        if not temp_email:
+            return jsonify({'error': 'Email not found or expired'}), 404
+        
+        # Create verification email message
+        subject = f"Verification Code from {service_name}"
+        body = f"Your verification code is: {code}\n\nThis code will expire in 10 minutes.\n\nIf you didn't request this code, please ignore this email."
+        
+        message = EmailMessage(
+            temp_email_id=temp_email.id,
+            sender=f"noreply@{service_name.lower().replace(' ', '')}.com",
+            subject=subject,
+            body=body,
+            is_spam=False
+        )
+        
+        db.session.add(message)
+        db.session.commit()
+        
+        return jsonify({
+            'status': 'success',
+            'message': 'Verification code sent',
+            'email_id': temp_email.id
+        })
+        
+    except Exception as e:
+        logging.error(f"Verification simulation error: {e}")
+        return jsonify({'error': 'Internal server error'}), 500
 
 
 # Webhook endpoints for receiving messages
