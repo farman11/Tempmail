@@ -93,11 +93,13 @@
                             <div class="font-medium text-gray-900">
                                 {% if message.sender_name and message.sender_name != message.sender_email %}
                                     {{ message.sender_name }}
-                                {% else %}
+                                {% elif message.sender_email %}
                                     {{ message.sender_email.split('@')[0] }}
+                                {% else %}
+                                    {{ message.sender.split('@')[0] if message.sender else 'Unknown' }}
                                 {% endif %}
                             </div>
-                            <div class="text-sm text-gray-500">{{ message.sender_email }}</div>
+                            <div class="text-sm text-gray-500">{{ message.sender_email or message.sender or 'Unknown' }}</div>
                         </div>
                         <div class="flex-1 px-4">
                             <div class="font-medium text-gray-900">{{ message.subject }}</div>
@@ -113,17 +115,19 @@
                     <div id="email-content-{{ loop.index }}" class="hidden mt-4 p-4 bg-gray-50 rounded-lg border">
                         <div class="mb-4 border-b border-gray-300 pb-3">
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-2 text-sm">
-                                <div><strong>From:</strong> {{ message.sender_name or message.sender_email.split('@')[0] }} &lt;{{ message.sender_email }}&gt;</div>
+                                <div><strong>From:</strong> {{ message.sender_name or (message.sender_email.split('@')[0] if message.sender_email else message.sender.split('@')[0]) }} &lt;{{ message.sender_email or message.sender }}&gt;</div>
                                 <div><strong>To:</strong> {{ active_emails[0].email_address }}</div>
                                 <div><strong>Subject:</strong> {{ message.subject }}</div>
                                 <div><strong>Date:</strong> {{ message.received_at.strftime('%Y-%m-%d %H:%M') if message.received_at else 'Unknown' }}</div>
                             </div>
                         </div>
                         <div class="email-body bg-white p-4 rounded border">
-                            {% if message.html_content %}
+                            {% if message.html_content and message.html_content.strip() %}
                                 <div class="prose max-w-none">{{ message.html_content|safe }}</div>
-                            {% elif message.text_content %}
+                            {% elif message.text_content and message.text_content.strip() %}
                                 <div class="whitespace-pre-wrap font-mono text-sm">{{ message.text_content }}</div>
+                            {% elif message.body and message.body.strip() %}
+                                <div class="whitespace-pre-wrap font-mono text-sm">{{ message.body }}</div>
                             {% else %}
                                 <div class="text-gray-500 italic">No message content available</div>
                             {% endif %}
@@ -276,17 +280,30 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Toggle email content visibility
     document.querySelectorAll('.toggle-email').forEach(button => {
-        button.addEventListener('click', function() {
+        button.addEventListener('click', function(e) {
+            e.preventDefault();
+            console.log('Toggle button clicked');
+            
             const messageId = this.getAttribute('data-message-id');
+            console.log('Message ID:', messageId);
+            
             const content = document.getElementById('email-content-' + messageId);
+            console.log('Content element:', content);
+            
             const icon = this.querySelector('i');
             
-            if (content.classList.contains('hidden')) {
-                content.classList.remove('hidden');
-                icon.className = 'fas fa-eye-slash';
+            if (content) {
+                if (content.classList.contains('hidden')) {
+                    content.classList.remove('hidden');
+                    icon.className = 'fas fa-eye-slash';
+                    console.log('Showing email content');
+                } else {
+                    content.classList.add('hidden');
+                    icon.className = 'fas fa-eye';
+                    console.log('Hiding email content');
+                }
             } else {
-                content.classList.add('hidden');
-                icon.className = 'fas fa-eye';
+                console.error('Could not find content element with ID: email-content-' + messageId);
             }
         });
     });
