@@ -15,25 +15,18 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
     <style>
-        body { font-family: 'Inter', sans-serif; }
-        .btn-transition { transition: all 0.3s ease; }
-        .btn-transition:hover { transform: translateY(-1px); box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); }
-        .gmail-style { 
-            background: #fff;
-            border: 1px solid #e5e7eb;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        body { 
+            font-family: 'Inter', sans-serif; 
+            background-color: #f5f5f5;
         }
-        .ad-container {
-            background: #f9fafb;
-            border: 1px solid #e5e7eb;
-            border-radius: 8px;
-            min-height: 300px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #9ca3af;
-            text-align: center;
+        .btn-transition { 
+            transition: all 0.3s ease; 
+        }
+        .btn-transition:hover { 
+            transform: translateY(-1px); 
+        }
+        .copy-btn:hover {
+            background-color: #16a34a !important;
         }
         .email-body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
@@ -63,92 +56,42 @@
     </style>
 </head>
 <body class="bg-gray-50 min-h-screen">
-    <!-- Header Navigation -->
-    <nav class="bg-gradient-to-r from-blue-600 to-blue-800 text-white shadow-lg fixed top-0 left-0 right-0 z-50">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between h-16">
-                <div class="flex items-center">
-                    <a href="{{ url_for('index') }}" class="flex items-center space-x-2 text-white hover:text-blue-200">
-                        <i class="fas fa-envelope-open-text text-2xl"></i>
-                        <span class="text-xl font-bold">TempMail</span>
-                    </a>
-                </div>
+    <!-- Top Navigation Bar -->
+    <nav class="bg-gray-900 text-white">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="flex justify-between items-center h-12 text-sm">
+                <!-- Left side - App stores -->
                 <div class="flex items-center space-x-6">
-                    <a href="{{ url_for('index') }}" class="text-white hover:text-blue-200 transition-colors">
-                        <i class="fas fa-home mr-1"></i> Home
-                    </a>
+                    <div class="flex items-center space-x-2 hover:text-gray-300 cursor-pointer">
+                        <i class="fab fa-apple text-lg"></i>
+                        <span>App Store</span>
+                    </div>
+                    <div class="flex items-center space-x-2 hover:text-gray-300 cursor-pointer">
+                        <i class="fab fa-google-play text-lg"></i>
+                        <span>Google Play</span>
+                    </div>
+                </div>
+                
+                <!-- Center Logo -->
+                <div class="flex items-center space-x-2">
+                    <i class="fas fa-envelope text-green-400 text-xl"></i>
+                    <span class="text-xl font-bold">TEMPMAIL</span>
+                </div>
+                
+                <!-- Right side - Options -->
+                <div class="flex items-center space-x-4">
+                    <span class="hover:text-gray-300 cursor-pointer">Temp Number</span>
+                    <button class="bg-yellow-400 text-black px-4 py-1 rounded-full font-semibold hover:bg-yellow-300 transition-colors">
+                        Premium
+                    </button>
                 </div>
             </div>
         </div>
     </nav>
 
-    <!-- Main Content with Responsive Layout -->
-    <div class="mt-16 min-h-screen bg-gray-50 flex">
-        <!-- Left Sidebar - Desktop Only -->
-        <aside class="hidden lg:block w-72 bg-white border-r border-gray-200 p-6 h-[calc(100vh-4rem)] overflow-y-auto sticky top-16">
-            <!-- Google Ads Top -->
-            <div class="ad-container mb-8">
-                <small class="text-xs text-gray-500 block mb-2 text-center">Advertisement</small>
-                <div class="bg-gradient-to-br from-blue-50 to-indigo-100 border border-gray-200 rounded-lg min-h-80 flex items-center justify-center">
-                    <div class="text-center text-gray-500">
-                        <i class="fas fa-ad text-3xl mb-3"></i>
-                        <p class="text-sm">Google Ads<br>Space Available</p>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Google Ads Bottom -->
-            <div class="ad-container">
-                <small class="text-xs text-gray-500 block mb-2 text-center">Advertisement</small>
-                <div class="bg-gradient-to-br from-purple-50 to-pink-100 border border-gray-200 rounded-lg min-h-80 flex items-center justify-center">
-                    <div class="text-center text-gray-500">
-                        <i class="fas fa-bullhorn text-3xl mb-3"></i>
-                        <p class="text-sm">Google Ads<br>Space Available</p>
-                    </div>
-                </div>
-            </div>
-        </aside>
-
-        <!-- Main Content Area -->
-        <main class="flex-1 p-6 lg:p-8">
-            {% block content %}{% endblock %}
-            
-            <!-- Mobile Ads -->
-            <div class="mt-6 lg:hidden">
-                <div class="bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg p-4 text-white text-center">
-                    <small class="block mb-2 opacity-75">Advertisement</small>
-                    <div class="text-sm">
-                        <i class="fas fa-ad text-2xl mb-2"></i>
-                        <p>Mobile Ad Space Available</p>
-                    </div>
-                </div>
-            </div>
-        </main>
-
-        <!-- Right Sidebar - Desktop Only -->
-        <aside class="hidden lg:block w-72 bg-white border-l border-gray-200 p-6 h-[calc(100vh-4rem)] overflow-y-auto sticky top-16">
-            <!-- Google Ads Top -->
-            <div class="ad-container mb-8">
-                <small class="text-xs text-gray-500 block mb-2 text-center">Advertisement</small>
-                <div class="bg-gradient-to-br from-green-50 to-emerald-100 border border-gray-200 rounded-lg min-h-80 flex items-center justify-center">
-                    <div class="text-center text-gray-500">
-                        <i class="fas fa-ad text-3xl mb-3"></i>
-                        <p class="text-sm">Google Ads<br>Space Available</p>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Google Ads Bottom -->
-            <div class="ad-container">
-                <small class="text-xs text-gray-500 block mb-2 text-center">Advertisement</small>
-                <div class="bg-gradient-to-br from-yellow-50 to-orange-100 border border-gray-200 rounded-lg min-h-80 flex items-center justify-center">
-                    <div class="text-center text-gray-500">
-                        <i class="fas fa-bullhorn text-3xl mb-3"></i>
-                        <p class="text-sm">Google Ads<br>Space Available</p>
-                    </div>
-                </div>
-            </div>
-        </aside>
+    <!-- Main Content Layout -->
+    <div class="min-h-screen bg-gray-100">
+        {% block content %}{% endblock %}
     </div>
 
     <!-- Footer with Google Ads -->
