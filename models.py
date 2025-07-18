@@ -10,12 +10,20 @@ class TempEmail(db.Model):
     expires_at = db.Column(db.DateTime, nullable=False)
     is_active = db.Column(db.Boolean, default=True)
     
-    def __init__(self, session_id, hours=24):
+    # Mail.tm integration fields
+    mail_tm_password = db.Column(db.String(255), nullable=True)
+    mail_tm_id = db.Column(db.String(255), nullable=True)
+    
+    def __init__(self, session_id, hours=24, use_real_email=True):
         self.session_id = session_id
-        # Use a more realistic domain for testing
-        domain = "tempmail.replit.app"  # This can be configured later
-        self.email_address = f"{uuid.uuid4().hex[:12]}@{domain}"
-        self.expires_at = datetime.utcnow() + timedelta(hours=hours)
+        if use_real_email:
+            # This will be handled by mail_tm_service.create_real_temp_email()
+            pass
+        else:
+            # Fallback to local domain
+            domain = "tempmail.replit.app"
+            self.email_address = f"{uuid.uuid4().hex[:12]}@{domain}"
+            self.expires_at = datetime.utcnow() + timedelta(hours=hours)
     
     @property
     def is_expired(self):
@@ -34,6 +42,9 @@ class EmailMessage(db.Model):
     received_at = db.Column(db.DateTime, default=datetime.utcnow)
     is_spam = db.Column(db.Boolean, default=False)
     is_read = db.Column(db.Boolean, default=False)
+    
+    # Mail.tm integration field
+    mail_tm_id = db.Column(db.String(255), nullable=True)
     
     temp_email = db.relationship('TempEmail', backref=db.backref('messages', lazy=True))
 

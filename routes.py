@@ -6,6 +6,7 @@ from utils import is_spam_email
 from datetime import datetime
 import logging
 import re
+from mail_tm_service import mail_tm_service
 
 @app.before_request
 def ensure_session():
@@ -39,12 +40,14 @@ def generate_email():
         flash('You can only have 5 active temporary emails at once.', 'warning')
         return redirect(url_for('index'))
     
-    # Create new temporary email
-    temp_email = TempEmail(session_id=session_id)
-    db.session.add(temp_email)
-    db.session.commit()
+    # Create new temporary email using mail.tm service
+    temp_email = mail_tm_service.create_real_temp_email(session_id)
     
-    flash(f'Temporary email created: {temp_email.email_address}', 'success')
+    if temp_email:
+        flash(f'Real temporary email created: {temp_email.email_address}', 'success')
+    else:
+        flash('Error creating temporary email. Please try again.', 'error')
+    
     return redirect(url_for('index'))
 
 
@@ -63,6 +66,10 @@ def email_inbox(email_id):
     if temp_email.is_expired:
         flash('This email address has expired.', 'warning')
         return redirect(url_for('index'))
+    
+    # Fetch new emails from mail.tm before displaying
+    if hasattr(temp_email, 'mail_tm_password') and temp_email.mail_tm_password:
+        mail_tm_service.fetch_emails_for_account(temp_email)
     
     # Get messages (filter out spam unless requested)
     show_spam = request.args.get('show_spam', False)
@@ -310,5 +317,21 @@ def email_webhook():
     except Exception as e:
         logging.error(f"Email webhook error: {e}")
         return jsonify({'status': 'error'}), 500
+
+
+# Background email fetching route
+@app.route('/fetch-emails', methods=['POST'])
+def fetch_emails():
+    """Manually trigger email fetching for all accounts"""
+    try:
+        new_emails = mail_tm_service.fetch_all_emails()
+        return jsonify({
+            'status': 'success',
+            'new_emails': new_emails,
+            'message': f'Fetched {new_emails} new emails'
+        })
+    except Exception as e:
+        logging.error(f"Error fetching emails: {e}")
+        return jsonify({'status': 'error', 'message': str(e)}), 500
 
 

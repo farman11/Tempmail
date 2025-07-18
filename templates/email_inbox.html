@@ -45,8 +45,8 @@
                         <i class="fas fa-exclamation-triangle"></i> Show Spam
                     </a>
                 {% endif %}
-                <button class="btn btn-sm btn-outline-info refresh-btn">
-                    <i class="fas fa-sync-alt"></i> Refresh
+                <button class="btn btn-sm btn-outline-info refresh-btn" onclick="fetchNewEmails()">
+                    <i class="fas fa-sync-alt"></i> Check for New Emails
                 </button>
             </div>
         </div>
@@ -178,5 +178,54 @@ document.querySelector('.refresh-btn').addEventListener('click', function() {
     this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Refreshing...';
     location.reload();
 });
+
+// Function to fetch new emails
+function fetchNewEmails() {
+    const button = document.querySelector('.refresh-btn');
+    const originalContent = button.innerHTML;
+    button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Checking...';
+    button.disabled = true;
+    
+    fetch('/fetch-emails', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.status === 'success') {
+            if (data.new_emails > 0) {
+                location.reload(); // Reload to show new emails
+            } else {
+                // Show success message
+                const alertDiv = document.createElement('div');
+                alertDiv.className = 'alert alert-info alert-dismissible fade show mt-3';
+                alertDiv.innerHTML = `
+                    <i class="fas fa-info-circle"></i> No new emails found.
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                `;
+                button.parentNode.insertBefore(alertDiv, button.nextSibling);
+                
+                // Auto dismiss after 3 seconds
+                setTimeout(() => {
+                    if (alertDiv.parentNode) {
+                        alertDiv.remove();
+                    }
+                }, 3000);
+            }
+        } else {
+            alert('Error checking for emails: ' + (data.message || 'Unknown error'));
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Error checking for emails');
+    })
+    .finally(() => {
+        button.innerHTML = originalContent;
+        button.disabled = false;
+    });
+}
 </script>
 {% endblock %}
