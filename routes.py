@@ -128,6 +128,49 @@ def mark_email_read(message_id):
     return jsonify({'status': 'success'})
 
 
+@app.route('/fetch-emails', methods=['POST'])
+def fetch_emails():
+    """Manually fetch emails from mail.tm for active accounts"""
+    try:
+        session_id = session.get('session_id')
+        if not session_id:
+            return jsonify({'status': 'error', 'message': 'No active session'}), 400
+        
+        # Get user's active emails
+        active_emails = TempEmail.query.filter_by(
+            session_id=session_id,
+            is_active=True
+        ).filter(TempEmail.expires_at > datetime.utcnow()).all()
+        
+        if not active_emails:
+            return jsonify({'status': 'error', 'message': 'No active temporary emails found'}), 404
+        
+        total_new_messages = 0
+        
+        # Fetch emails for each active temp email
+        for temp_email in active_emails:
+            if hasattr(temp_email, 'mail_tm_password') and temp_email.mail_tm_password:
+                new_count = mail_tm_service.fetch_emails_for_account(temp_email, db, EmailMessage)
+                total_new_messages += new_count
+        
+        if total_new_messages > 0:
+            return jsonify({
+                'status': 'success', 
+                'message': f'Found {total_new_messages} new message(s)',
+                'new_messages': total_new_messages
+            })
+        else:
+            return jsonify({
+                'status': 'success', 
+                'message': 'No new messages found',
+                'new_messages': 0
+            })
+            
+    except Exception as e:
+        logging.error(f"Error fetching emails: {e}")
+        return jsonify({'status': 'error', 'message': 'Failed to check for new messages'}), 500
+
+
 
 # Development route to add test emails
 @app.route('/add-test-email/<int:email_id>')
@@ -177,8 +220,12 @@ def add_test_email(email_id):
         message = EmailMessage(
             temp_email_id=temp_email.id,
             sender=test_email['sender'],
+            sender_email=test_email['sender'],
+            sender_name=None,
             subject=test_email['subject'],
             body=test_email['body'],
+            text_content=test_email['body'],
+            html_content=None,
             is_spam=spam_check
         )
         
@@ -331,19 +378,6 @@ def email_webhook():
         return jsonify({'status': 'error'}), 500
 
 
-# Background email fetching route
-@app.route('/fetch-emails', methods=['POST'])
-def fetch_emails():
-    """Manually trigger email fetching for all accounts"""
-    try:
-        new_emails = mail_tm_service.fetch_all_emails(db, TempEmail, EmailMessage)
-        return jsonify({
-            'status': 'success',
-            'new_emails': new_emails,
-            'message': f'Fetched {new_emails} new emails'
-        })
-    except Exception as e:
-        logging.error(f"Error fetching emails: {e}")
-        return jsonify({'status': 'error', 'message': str(e)}), 500
+
 
 

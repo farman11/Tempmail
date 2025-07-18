@@ -199,12 +199,21 @@ class MailTMService:
                 if not details:
                     continue
                 
+                # Extract sender information
+                from_info = details.get('from', {})
+                sender_email = from_info.get('address', 'Unknown')
+                sender_name = from_info.get('name', '')
+                
                 # Create EmailMessage record
                 email_msg = EmailMessage(
                     temp_email_id=temp_email.id,
-                    sender=details.get('from', {}).get('address', 'Unknown'),
+                    sender=sender_email,  # Backward compatibility
+                    sender_email=sender_email,
+                    sender_name=sender_name if sender_name else None,
                     subject=details.get('subject', ''),
-                    body=details.get('text', details.get('html', '')),
+                    body=details.get('text', details.get('html', '')),  # Backward compatibility
+                    text_content=details.get('text', ''),
+                    html_content=details.get('html', ''),
                     received_at=datetime.fromisoformat(details['createdAt'].replace('Z', '+00:00')),
                     is_spam=False,  # mail.tm handles spam filtering
                     is_read=False

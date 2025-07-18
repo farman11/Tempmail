@@ -37,9 +37,13 @@ class TempEmail(db.Model):
 class EmailMessage(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     temp_email_id = db.Column(db.Integer, db.ForeignKey('temp_email.id'), nullable=False)
-    sender = db.Column(db.String(255), nullable=False)
+    sender = db.Column(db.String(255), nullable=False)  # Keeping for backward compatibility
+    sender_email = db.Column(db.String(255), nullable=False)
+    sender_name = db.Column(db.String(255), nullable=True)
     subject = db.Column(db.String(500), nullable=True)
     body = db.Column(db.Text, nullable=True)
+    text_content = db.Column(db.Text, nullable=True)
+    html_content = db.Column(db.Text, nullable=True)
     received_at = db.Column(db.DateTime, default=datetime.utcnow)
     is_spam = db.Column(db.Boolean, default=False)
     is_read = db.Column(db.Boolean, default=False)

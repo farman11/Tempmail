@@ -191,3 +191,110 @@
     </div>
 </div>
 {% endblock %}
+
+{% block scripts %}
+<script>
+// Real-time email refresh functionality
+function refreshEmails() {
+    const refreshIcon = document.querySelector('.refresh-icon');
+    const originalClass = refreshIcon.className;
+    
+    // Add spinning animation
+    refreshIcon.className = 'fas fa-sync-alt fa-spin';
+    
+    // Call the fetch-emails endpoint
+    fetch('/fetch-emails', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.status === 'success') {
+            if (data.new_messages > 0) {
+                // Show success message and reload page to display new emails
+                alert(`Found ${data.new_messages} new message(s)! Refreshing...`);
+                location.reload();
+            } else {
+                // Show no new messages
+                alert('No new messages found');
+            }
+        } else {
+            alert('Error checking for emails: ' + (data.message || 'Unknown error'));
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Error checking for emails');
+    })
+    .finally(() => {
+        // Reset icon
+        refreshIcon.className = originalClass;
+    });
+}
+
+// Change email function
+function changeEmail() {
+    if (confirm('Generate a new temporary email? This will delete the current one and all its messages.')) {
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = '/generate-email';
+        document.body.appendChild(form);
+        form.submit();
+    }
+}
+
+// Delete email function
+function deleteEmail(emailId) {
+    if (confirm('Delete this temporary email and all its messages?')) {
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = '/delete-email/' + emailId;
+        document.body.appendChild(form);
+        form.submit();
+    }
+}
+
+// Copy to clipboard functionality
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.copy-btn').forEach(button => {
+        button.addEventListener('click', function() {
+            const text = this.getAttribute('data-text');
+            navigator.clipboard.writeText(text).then(() => {
+                const originalContent = this.innerHTML;
+                this.innerHTML = '<i class="fas fa-check"></i> <span>Copied!</span>';
+                setTimeout(() => {
+                    this.innerHTML = originalContent;
+                }, 2000);
+            }).catch(err => {
+                console.error('Failed to copy: ', err);
+                alert('Failed to copy to clipboard');
+            });
+        });
+    });
+    
+    // Toggle email content visibility
+    document.querySelectorAll('.toggle-email').forEach(button => {
+        button.addEventListener('click', function() {
+            const messageId = this.getAttribute('data-message-id');
+            const content = document.getElementById('email-content-' + messageId);
+            const icon = this.querySelector('i');
+            
+            if (content.classList.contains('hidden')) {
+                content.classList.remove('hidden');
+                icon.className = 'fas fa-eye-slash';
+            } else {
+                content.classList.add('hidden');
+                icon.className = 'fas fa-eye';
+            }
+        });
+    });
+});
+
+// Auto-refresh every 30 seconds
+setInterval(function() {
+    refreshEmails();
+}, 30000);
+</script>
+{% endblock %}
