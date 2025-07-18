@@ -181,3 +181,54 @@ function createToastContainer() {
     document.body.appendChild(container);
     return container;
 }
+
+// New Functions for Single Page Actions
+function refreshEmails() {
+    const refreshIcon = document.querySelector('.refresh-icon');
+    refreshIcon.classList.add('fa-spin');
+    
+    // Reload the page to get fresh emails
+    location.reload();
+}
+
+function changeEmail() {
+    if (confirm('Generate a new email address? This will delete the current one.')) {
+        // Submit the generate form
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = '/generate-email';
+        document.body.appendChild(form);
+        form.submit();
+    }
+}
+
+function deleteEmail(emailId) {
+    if (confirm('Delete this email address? All received emails will be lost.')) {
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = `/delete-email/${emailId}`;
+        document.body.appendChild(form);
+        form.submit();
+    }
+}
+
+// Toggle email content visibility
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.toggle-email').forEach(button => {
+        button.addEventListener('click', function() {
+            const messageId = this.dataset.messageId;
+            const content = document.getElementById(`email-content-${messageId}`);
+            const icon = this.querySelector('i');
+            
+            if (content.classList.contains('hidden')) {
+                content.classList.remove('hidden');
+                icon.classList.remove('fa-eye');
+                icon.classList.add('fa-eye-slash');
+            } else {
+                content.classList.add('hidden');
+                icon.classList.remove('fa-eye-slash');
+                icon.classList.add('fa-eye');
+            }
+        });
+    });
+});
