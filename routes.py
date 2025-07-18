@@ -47,14 +47,14 @@ def generate_email():
     
     if temp_email:
         flash(f'New temporary email created: {temp_email.email_address}', 'success')
-        return redirect(url_for('email_inbox', email_id=temp_email.id, show_ads='true'))
+        return redirect(url_for('index'))
     else:
         # Fallback to local email if mail.tm fails
         temp_email = TempEmail(session_id=session_id, use_real_email=False)
         db.session.add(temp_email)
         db.session.commit()
         flash(f'Temporary email created: {temp_email.email_address} (Demo mode)', 'warning')
-        return redirect(url_for('email_inbox', email_id=temp_email.id, show_ads='true'))
+        return redirect(url_for('index'))
 
 
 
