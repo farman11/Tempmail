@@ -109,6 +109,66 @@ def mark_email_read(message_id):
 
 
 
+# Development route to add test emails
+@app.route('/add-test-email/<int:email_id>')
+def add_test_email(email_id):
+    """Add test emails for development purposes"""
+    session_id = session.get('session_id')
+    
+    temp_email = TempEmail.query.filter_by(
+        id=email_id, 
+        session_id=session_id, 
+        is_active=True
+    ).first_or_404()
+    
+    # Add some test emails
+    test_emails = [
+        {
+            'sender': 'welcome@service.com',
+            'subject': 'Welcome to our service!',
+            'body': 'Thank you for signing up! Your account is now active.'
+        },
+        {
+            'sender': 'noreply@bank.com',
+            'subject': 'Your account statement is ready',
+            'body': 'Your monthly account statement is now available for download.'
+        },
+        {
+            'sender': 'spam@marketing.com',
+            'subject': 'URGENT: You won 1 million dollars!',
+            'body': 'Congratulations! You have won our lottery. Send us your bank details immediately!'
+        },
+        {
+            'sender': 'support@github.com',
+            'subject': 'Security alert: New login',
+            'body': 'We noticed a new login to your account from a new device.'
+        },
+        {
+            'sender': 'no-reply@amazon.com',
+            'subject': 'Your order has been shipped',
+            'body': 'Good news! Your order #123456 has been shipped and is on its way.'
+        }
+    ]
+    
+    for test_email in test_emails:
+        # Check for spam
+        spam_check = is_spam_email(test_email['sender'], test_email['subject'], test_email['body'])
+        
+        message = EmailMessage(
+            temp_email_id=temp_email.id,
+            sender=test_email['sender'],
+            subject=test_email['subject'],
+            body=test_email['body'],
+            is_spam=spam_check
+        )
+        
+        db.session.add(message)
+    
+    db.session.commit()
+    flash('Test emails added successfully!', 'success')
+    return redirect(url_for('email_inbox', email_id=email_id))
+
+
 # Webhook endpoints for receiving messages
 @app.route('/webhook/email', methods=['POST'])
 def email_webhook():

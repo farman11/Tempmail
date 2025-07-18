@@ -118,9 +118,15 @@
                             Your temporary inbox is empty. Messages will appear here when received.
                         {% endif %}
                     </p>
-                    <button class="btn btn-outline-info refresh-btn">
-                        <i class="fas fa-sync-alt"></i> Check for New Messages
-                    </button>
+                    <div class="btn-group">
+                        <button class="btn btn-outline-info refresh-btn">
+                            <i class="fas fa-sync-alt"></i> Check for New Messages
+                        </button>
+                        <a href="{{ url_for('add_test_email', email_id=temp_email.id) }}" 
+                           class="btn btn-outline-secondary">
+                            <i class="fas fa-plus"></i> Add Test Emails
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>
