@@ -62,44 +62,61 @@
                 </h4>
                 
                 {% for message in messages %}
-                <div class="card mb-3 {% if message.is_spam %}border-warning{% elif not message.is_read %}border-primary{% endif %}">
-                    <div class="card-header d-flex justify-content-between align-items-center">
-                        <div>
-                            <strong>{{ message.sender }}</strong>
-                            {% if message.is_spam %}
-                                <span class="badge bg-warning text-dark ms-2">
-                                    <i class="fas fa-exclamation-triangle"></i> SPAM
-                                </span>
-                            {% endif %}
-                            {% if not message.is_read %}
-                                <span class="badge bg-primary ms-2">
-                                    <i class="fas fa-circle"></i> NEW
-                                </span>
-                            {% endif %}
+                <div class="card mb-4 email-message {% if message.is_spam %}border-warning{% elif not message.is_read %}border-primary{% endif %}">
+                    <!-- Email Header -->
+                    <div class="card-header">
+                        <div class="row align-items-center">
+                            <div class="col-12 col-md-8">
+                                <div class="d-flex flex-wrap align-items-center gap-2">
+                                    <strong class="sender-email">{{ message.sender }}</strong>
+                                    {% if message.is_spam %}
+                                        <span class="badge bg-warning text-dark">
+                                            <i class="fas fa-exclamation-triangle"></i> SPAM
+                                        </span>
+                                    {% endif %}
+                                    {% if not message.is_read %}
+                                        <span class="badge bg-primary">
+                                            <i class="fas fa-circle"></i> NEW
+                                        </span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="col-12 col-md-4 text-md-end mt-2 mt-md-0">
+                                <small class="text-muted">
+                                    <i class="fas fa-clock"></i>
+                                    <span class="d-none d-sm-inline">{{ message.received_at.strftime('%Y-%m-%d %H:%M') }}</span>
+                                    <span class="d-sm-none">{{ message.received_at.strftime('%m/%d %H:%M') }}</span>
+                                </small>
+                            </div>
                         </div>
-                        <small class="text-muted">
-                            {{ message.received_at.strftime('%Y-%m-%d %H:%M') }}
-                        </small>
                     </div>
+
+                    <!-- Email Subject -->
                     <div class="card-body">
-                        {% if message.subject %}
-                        <h6 class="card-title">{{ message.subject }}</h6>
-                        {% endif %}
+                        <h5 class="card-title email-subject mb-3">{{ message.subject or 'No Subject' }}</h5>
                         
-                        <div class="message-body">
+                        <!-- Email Content -->
+                        <div class="email-content">
                             {% if message.body %}
-                                <pre class="text-wrap">{{ message.body }}</pre>
+                                <div class="email-body">{{ message.body|safe }}</div>
                             {% else %}
-                                <em class="text-muted">No message body</em>
+                                <em class="text-muted">No content available</em>
                             {% endif %}
                         </div>
-                        
-                        {% if not message.is_read %}
-                        <button class="btn btn-sm btn-outline-primary mark-read-btn mt-2" 
-                                data-message-id="{{ message.id }}">
-                            <i class="fas fa-check"></i> Mark as Read
-                        </button>
-                        {% endif %}
+
+                        <!-- Action Buttons -->
+                        <div class="email-actions mt-3 d-flex flex-wrap gap-2">
+                            {% if not message.is_read %}
+                            <button class="btn btn-sm btn-outline-secondary mark-read-btn" 
+                                    data-message-id="{{ message.id }}">
+                                <i class="fas fa-eye"></i> Mark as Read
+                            </button>
+                            {% endif %}
+                            <button class="btn btn-sm btn-outline-primary copy-email-btn" 
+                                    data-content="{{ message.body|e }}">
+                                <i class="fas fa-copy"></i> Copy Content
+                            </button>
+                        </div>
                     </div>
                 </div>
                 {% endfor %}
@@ -230,5 +247,60 @@ function fetchNewEmails() {
         button.disabled = false;
     });
 }
+
+// Copy email content functionality
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.copy-email-btn').forEach(button => {
+        button.addEventListener('click', function() {
+            const content = this.getAttribute('data-content');
+            const originalContent = this.innerHTML;
+            
+            navigator.clipboard.writeText(content).then(() => {
+                // Show success feedback
+                this.innerHTML = '<i class="fas fa-check"></i> Copied!';
+                this.classList.add('copied');
+                
+                setTimeout(() => {
+                    this.innerHTML = originalContent;
+                    this.classList.remove('copied');
+                }, 2000);
+            }).catch(err => {
+                console.error('Could not copy text: ', err);
+                // Fallback for older browsers
+                const textArea = document.createElement('textarea');
+                textArea.value = content;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                
+                // Show success feedback
+                this.innerHTML = '<i class="fas fa-check"></i> Copied!';
+                this.classList.add('copied');
+                
+                setTimeout(() => {
+                    this.innerHTML = originalContent;
+                    this.classList.remove('copied');
+                }, 2000);
+            });
+        });
+    });
+    
+    // Make links in emails open in new tab and safe
+    document.querySelectorAll('.email-body a').forEach(link => {
+        link.setAttribute('target', '_blank');
+        link.setAttribute('rel', 'noopener noreferrer');
+        link.style.wordBreak = 'break-all';
+    });
+    
+    // Format verification codes and important numbers
+    document.querySelectorAll('.email-body').forEach(emailBody => {
+        // Highlight potential verification codes (6-8 digit numbers)
+        emailBody.innerHTML = emailBody.innerHTML.replace(
+            /\b(\d{6,8})\b/g, 
+            '<span style="background-color: #fff3cd; padding: 4px 8px; border-radius: 4px; font-weight: bold; color: #856404; font-family: monospace;">$1</span>'
+        );
+    });
+});
 </script>
 {% endblock %}
