@@ -250,6 +250,12 @@ function fetchNewEmails() {
 
 // Copy email content functionality
 document.addEventListener('DOMContentLoaded', function() {
+    // Show ads overlay if parameter is present
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('show_ads') === 'true') {
+        showAdOverlay();
+    }
+    
     document.querySelectorAll('.copy-email-btn').forEach(button => {
         button.addEventListener('click', function() {
             const content = this.getAttribute('data-content');
@@ -286,21 +292,82 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
     
-    // Make links in emails open in new tab and safe
+    // Make links in emails clickable and safe
     document.querySelectorAll('.email-body a').forEach(link => {
         link.setAttribute('target', '_blank');
         link.setAttribute('rel', 'noopener noreferrer');
-        link.style.wordBreak = 'break-all';
+        link.style.cursor = 'pointer';
+        
+        // Add visual indication for links
+        if (!link.textContent.startsWith('http')) {
+            link.style.textDecoration = 'underline';
+        }
     });
     
     // Format verification codes and important numbers
     document.querySelectorAll('.email-body').forEach(emailBody => {
-        // Highlight potential verification codes (6-8 digit numbers)
-        emailBody.innerHTML = emailBody.innerHTML.replace(
-            /\b(\d{6,8})\b/g, 
-            '<span style="background-color: #fff3cd; padding: 4px 8px; border-radius: 4px; font-weight: bold; color: #856404; font-family: monospace;">$1</span>'
+        // Highlight potential verification codes (4-8 digit numbers)
+        let content = emailBody.innerHTML;
+        
+        // Pattern for verification codes
+        content = content.replace(
+            /\b(\d{4,8})\b/g, 
+            '<span class="verification-code">$1</span>'
         );
+        
+        // Pattern for URLs that aren't already links
+        content = content.replace(
+            /(https?:\/\/[^\s<]+)/g,
+            '<a href="$1" target="_blank" rel="noopener noreferrer">$1</a>'
+        );
+        
+        emailBody.innerHTML = content;
     });
 });
+
+function showAdOverlay() {
+    const overlay = document.createElement('div');
+    overlay.className = 'ad-overlay';
+    
+    const modal = document.createElement('div');
+    modal.className = 'ad-modal';
+    
+    modal.innerHTML = `
+        <h3><i class="fas fa-bullhorn"></i> Advertisement</h3>
+        <div class="ad-content">
+            <i class="fas fa-ad" style="font-size: 3rem; margin-bottom: 20px; opacity: 0.5;"></i>
+            <p>Your Google Ads will appear here</p>
+            <small>Premium ad space for maximum visibility</small>
+        </div>
+        <div class="countdown">
+            <i class="fas fa-clock"></i> <span id="countdown">2</span>s
+        </div>
+    `;
+    
+    overlay.appendChild(modal);
+    document.body.appendChild(overlay);
+    
+    let countdown = 2;
+    const countdownElement = document.getElementById('countdown');
+    
+    const timer = setInterval(() => {
+        countdown--;
+        countdownElement.textContent = countdown;
+        
+        if (countdown <= 0) {
+            clearInterval(timer);
+            overlay.style.animation = 'fadeOut 0.3s ease-out';
+            setTimeout(() => {
+                if (overlay.parentNode) {
+                    document.body.removeChild(overlay);
+                }
+                // Remove the parameter from URL
+                const url = new URL(window.location);
+                url.searchParams.delete('show_ads');
+                window.history.replaceState({}, '', url);
+            }, 300);
+        }
+    }, 1000);
+}
 </script>
 {% endblock %}

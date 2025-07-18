@@ -29,30 +29,32 @@ def index():
 @limiter.limit("10 per hour")
 def generate_email():
     session_id = session.get('session_id')
+    if not session_id:
+        session_id = str(uuid.uuid4())
+        session['session_id'] = session_id
     
-    # Check if user already has 5 active emails (limit)
-    active_count = TempEmail.query.filter_by(
-        session_id=session_id, 
-        is_active=True
-    ).filter(TempEmail.expires_at > datetime.utcnow()).count()
+    # Delete all old emails for this session before creating new one
+    old_emails = TempEmail.query.filter_by(session_id=session_id).all()
+    for old_email in old_emails:
+        # Delete associated messages first
+        EmailMessage.query.filter_by(temp_email_id=old_email.id).delete()
+        db.session.delete(old_email)
     
-    if active_count >= 5:
-        flash('You can only have 5 active temporary emails at once.', 'warning')
-        return redirect(url_for('index'))
+    db.session.commit()
     
     # Create new temporary email using mail.tm service
     temp_email = mail_tm_service.create_real_temp_email(session_id, db, TempEmail)
     
     if temp_email:
-        flash(f'Real temporary email created: {temp_email.email_address}', 'success')
+        flash(f'New temporary email created: {temp_email.email_address}', 'success')
+        return redirect(url_for('email_inbox', email_id=temp_email.id, show_ads='true'))
     else:
         # Fallback to local email if mail.tm fails
         temp_email = TempEmail(session_id=session_id, use_real_email=False)
         db.session.add(temp_email)
         db.session.commit()
         flash(f'Temporary email created: {temp_email.email_address} (Demo mode)', 'warning')
-    
-    return redirect(url_for('index'))
+        return redirect(url_for('email_inbox', email_id=temp_email.id, show_ads='true'))
 
 
 
