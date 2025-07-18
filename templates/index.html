@@ -1,92 +1,338 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="max-w-4xl mx-auto">
-    <!-- Hero Section -->
-    <div class="text-center mb-12">
-        <h1 class="text-4xl font-bold text-gray-800 mb-4">
-            <i class="fas fa-shield-alt text-blue-600"></i> 
-            Temporary Email Service
+<!-- Hero Section -->
+<div class="bg-gradient-to-br from-blue-50 to-indigo-100 py-16 mb-12 rounded-lg">
+    <div class="max-w-4xl mx-auto text-center px-6">
+        <h1 class="text-5xl font-bold text-gray-900 mb-6">
+            Your Temporary Email Solution
         </h1>
-        <p class="text-xl text-gray-600 mb-6">
+        <p class="text-xl text-gray-700 mb-8 max-w-3xl mx-auto leading-relaxed">
             Protect your privacy with real disposable email addresses that receive actual emails instantly. 
             No registration required, automatic expiration, completely anonymous.
         </p>
-        <div class="bg-green-50 border border-green-200 rounded-lg p-4 text-green-800">
-            <i class="fas fa-check-circle mr-2"></i>
-            <strong>Real Email Service:</strong> All emails are real working addresses that receive actual emails instantly!
-        </div>
-    </div>
-
-    <!-- Service Generation Card -->
-    <div class="mb-12">
-        <div class="bg-white rounded-lg shadow-lg p-8 text-center gmail-style">
-            <i class="fas fa-envelope text-5xl text-blue-600 mb-4"></i>
-            <h3 class="text-2xl font-bold text-gray-800 mb-4">Temporary Email</h3>
-            <p class="text-gray-600 mb-6">
-                Generate real temporary email addresses that receive actual emails instantly. 
-                Perfect for verifications, sign-ups, and testing. No registration required.
-            </p>
-            <form method="POST" action="{{ url_for('generate_email') }}">
-                <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-8 rounded-lg btn-transition">
-                    <i class="fas fa-plus mr-2"></i> Generate Email
-                </button>
-            </form>
-        </div>
-    </div>
-
-    <!-- Active Services -->
-    {% if active_emails %}
-    <div class="mb-8">
-        <h3 class="text-2xl font-bold text-gray-800 mb-6">
-            <i class="fas fa-list mr-2"></i> Your Active Email Addresses
-        </h3>
-
-        <div class="bg-white rounded-lg shadow-lg gmail-style">
-            <div class="bg-gray-50 px-6 py-4 border-b border-gray-200">
-                <h5 class="text-lg font-semibold text-gray-800">
-                    <i class="fas fa-envelope mr-2"></i> 
-                    Temporary Emails ({{ active_emails|length }}/5)
-                </h5>
+        
+        <!-- Email Input/Generation Section -->
+        <div class="bg-white rounded-xl shadow-lg p-8 max-w-2xl mx-auto">
+            <div class="flex flex-col sm:flex-row gap-4 items-center justify-center">
+                <div class="flex-1 w-full">
+                    <input type="text" 
+                           placeholder="Click generate to get your temporary email" 
+                           class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-center"
+                           readonly>
+                </div>
+                <form method="POST" action="{{ url_for('generate_email') }}" class="w-full sm:w-auto">
+                    <button type="submit" class="w-full sm:w-auto bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-8 rounded-lg btn-transition">
+                        Generate
+                    </button>
+                </form>
             </div>
-            <div class="divide-y divide-gray-200">
-                {% for email in active_emails %}
-                <div class="flex justify-between items-center p-6 hover:bg-gray-50 transition-colors">
-                    <div class="flex-1">
-                        <code class="bg-blue-50 text-blue-800 px-2 py-1 rounded text-sm font-mono">{{ email.email_address }}</code>
-                        <div class="mt-2 text-sm text-gray-600">
+            <p class="text-gray-500 text-sm mt-4">
+                <i class="fas fa-shield-alt mr-1"></i> 
+                100% anonymous • Auto-expires in 24 hours • Real emails received instantly
+            </p>
+        </div>
+    </div>
+</div>
+
+<!-- What is Disposable Temporary Email Section -->
+<div class="max-w-6xl mx-auto mb-16">
+    <div class="grid lg:grid-cols-3 gap-8">
+        <!-- Main Content -->
+        <div class="lg:col-span-2">
+            <div class="bg-white rounded-xl shadow-lg p-8">
+                <h2 class="text-3xl font-bold text-gray-900 mb-6">What is Disposable Temporary Email?</h2>
+                <div class="prose prose-lg text-gray-700 space-y-4">
+                    <p>
+                        Disposable email address is a service that allows receiving emails at a temporary address 
+                        that self-destructs after a certain time elapses. It is also known by names like 
+                        throwaway email, fake mail, or temp mail.
+                    </p>
+                    <p>
+                        Many forums, Wi-Fi owners, websites and blogs ask visitors to register before they 
+                        can view content, post comments or download something. Disposable temp mail addresses 
+                        allow users to do that without providing personal information.
+                    </p>
+                    
+                    <h3 class="text-xl font-semibold text-gray-900 mt-8 mb-4">Why Use Temporary Email?</h3>
+                    <ul class="space-y-2">
+                        <li class="flex items-start">
+                            <i class="fas fa-check text-green-500 mt-1 mr-3"></i>
+                            <span>Protect your personal email from spam and unwanted messages</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check text-green-500 mt-1 mr-3"></i>
+                            <span>Register for services without revealing your identity</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check text-green-500 mt-1 mr-3"></i>
+                            <span>Test email functionality without creating permanent accounts</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check text-green-500 mt-1 mr-3"></i>
+                            <span>Bypass email verification for one-time access</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Sidebar -->
+        <div class="lg:col-span-1">
+            <div class="bg-gradient-to-br from-purple-600 to-blue-600 rounded-xl p-6 text-white mb-6">
+                <h3 class="text-xl font-bold mb-4">Popular Articles</h3>
+                <div class="space-y-3">
+                    <a href="#" class="block text-white hover:text-blue-200 text-sm">
+                        How to protect your email privacy online
+                    </a>
+                    <a href="#" class="block text-white hover:text-blue-200 text-sm">
+                        Best practices for temporary email usage
+                    </a>
+                    <a href="#" class="block text-white hover:text-blue-200 text-sm">
+                        Understanding email security and anonymity
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Active Services -->
+{% if active_emails %}
+<div class="max-w-6xl mx-auto mb-16">
+    <h3 class="text-3xl font-bold text-gray-900 mb-8 text-center">
+        Your Active Email Addresses
+    </h3>
+
+    <div class="bg-white rounded-xl shadow-lg overflow-hidden">
+        <div class="bg-gray-50 px-6 py-4 border-b border-gray-200">
+            <h5 class="text-lg font-semibold text-gray-800">
+                <i class="fas fa-envelope mr-2"></i> 
+                Temporary Emails ({{ active_emails|length }}/5)
+            </h5>
+        </div>
+        <div class="divide-y divide-gray-200">
+            {% for email in active_emails %}
+            <div class="flex flex-col lg:flex-row lg:justify-between lg:items-center p-6 hover:bg-gray-50 transition-colors gap-4">
+                <div class="flex-1">
+                    <div class="bg-blue-50 text-blue-800 px-3 py-2 rounded-lg font-mono text-sm inline-block mb-3">
+                        {{ email.email_address }}
+                    </div>
+                    <div class="text-sm text-gray-600 space-y-1">
+                        <div>
                             <i class="fas fa-clock mr-1"></i> 
                             Expires: {{ email.expires_at.strftime('%Y-%m-%d %H:%M') }}
                         </div>
                         {% if email.messages %}
-                        <div class="mt-1 text-sm text-blue-600">
+                        <div class="text-blue-600">
                             <i class="fas fa-envelope mr-1"></i> 
-                            {{ email.messages|length }} message(s)
+                            {{ email.messages|length }} message(s) received
                         </div>
                         {% endif %}
                     </div>
-                    <div class="flex space-x-2">
-                        <button class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded btn-transition copy-btn" 
-                                data-text="{{ email.email_address }}">
-                            <i class="fas fa-copy"></i>
-                        </button>
-                        <a href="{{ url_for('email_inbox', email_id=email.id) }}" 
-                           class="bg-green-600 hover:bg-green-700 text-white px-3 py-2 rounded btn-transition">
-                            <i class="fas fa-inbox"></i>
-                        </a>
-                        <form method="POST" action="{{ url_for('delete_email', email_id=email.id) }}" 
-                              style="display: inline;">
-                            <button type="submit" class="bg-red-600 hover:bg-red-700 text-white px-3 py-2 rounded btn-transition"
-                                    onclick="return confirm('Delete this email address?')">
-                                <i class="fas fa-trash"></i>
-                            </button>
-                        </form>
-                    </div>
                 </div>
-                {% endfor %}
+                <div class="flex space-x-3">
+                    <button class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg btn-transition copy-btn flex items-center" 
+                            data-text="{{ email.email_address }}">
+                        <i class="fas fa-copy mr-2"></i> Copy
+                    </button>
+                    <a href="{{ url_for('email_inbox', email_id=email.id) }}" 
+                       class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg btn-transition flex items-center">
+                        <i class="fas fa-inbox mr-2"></i> Inbox
+                    </a>
+                    <form method="POST" action="{{ url_for('delete_email', email_id=email.id) }}" 
+                          style="display: inline;">
+                        <button type="submit" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg btn-transition flex items-center"
+                                onclick="return confirm('Delete this email address?')">
+                            <i class="fas fa-trash mr-2"></i> Delete
+                        </button>
+                    </form>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<!-- Features Grid -->
+<div class="max-w-6xl mx-auto mb-16">
+    <h2 class="text-3xl font-bold text-gray-900 mb-12 text-center">
+        Why Choose Our Temporary Email Service?
+    </h2>
+    
+    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div class="bg-white rounded-xl shadow-lg p-6 text-center hover:shadow-xl transition-shadow">
+            <div class="bg-blue-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                <i class="fas fa-user-secret text-2xl text-blue-600"></i>
+            </div>
+            <h3 class="text-xl font-semibold text-gray-900 mb-3">100% Anonymous</h3>
+            <p class="text-gray-600">No registration required. Complete anonymity and privacy protection.</p>
+        </div>
+        
+        <div class="bg-white rounded-xl shadow-lg p-6 text-center hover:shadow-xl transition-shadow">
+            <div class="bg-green-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                <i class="fas fa-clock text-2xl text-green-600"></i>
+            </div>
+            <h3 class="text-xl font-semibold text-gray-900 mb-3">Auto-Expire</h3>
+            <p class="text-gray-600">Email addresses automatically expire after 24 hours for security.</p>
+        </div>
+        
+        <div class="bg-white rounded-xl shadow-lg p-6 text-center hover:shadow-xl transition-shadow">
+            <div class="bg-purple-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                <i class="fas fa-shield-alt text-2xl text-purple-600"></i>
+            </div>
+            <h3 class="text-xl font-semibold text-gray-900 mb-3">Spam Protection</h3>
+            <p class="text-gray-600">Built-in spam filtering keeps your temporary inbox clean.</p>
+        </div>
+        
+        <div class="bg-white rounded-xl shadow-lg p-6 text-center hover:shadow-xl transition-shadow">
+            <div class="bg-yellow-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                <i class="fas fa-envelope text-2xl text-yellow-600"></i>
+            </div>
+            <h3 class="text-xl font-semibold text-gray-900 mb-3">Real Emails</h3>
+            <p class="text-gray-600">Receive actual emails instantly. No fake or simulated messages.</p>
+        </div>
+        
+        <div class="bg-white rounded-xl shadow-lg p-6 text-center hover:shadow-xl transition-shadow">
+            <div class="bg-red-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                <i class="fas fa-copy text-2xl text-red-600"></i>
+            </div>
+            <h3 class="text-xl font-semibold text-gray-900 mb-3">Easy Copy</h3>
+            <p class="text-gray-600">One-click copy to clipboard for quick use across websites.</p>
+        </div>
+        
+        <div class="bg-white rounded-xl shadow-lg p-6 text-center hover:shadow-xl transition-shadow">
+            <div class="bg-indigo-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                <i class="fas fa-mobile-alt text-2xl text-indigo-600"></i>
+            </div>
+            <h3 class="text-xl font-semibold text-gray-900 mb-3">Mobile Friendly</h3>
+            <p class="text-gray-600">Optimized for all devices. Works perfectly on mobile and desktop.</p>
+        </div>
+    </div>
+</div>
+
+<!-- FAQ Section -->
+<div class="max-w-6xl mx-auto mb-16">
+    <h2 class="text-3xl font-bold text-gray-900 mb-12 text-center">
+        Frequently Asked Questions
+    </h2>
+    
+    <div class="grid lg:grid-cols-2 gap-8">
+        <div class="space-y-6">
+            <div class="bg-white rounded-xl shadow-lg p-6">
+                <h3 class="text-lg font-semibold text-gray-900 mb-3">
+                    <i class="fas fa-question-circle text-blue-600 mr-2"></i>
+                    What is a Disposable Email Address?
+                </h3>
+                <p class="text-gray-600">
+                    A disposable email address is a temporary email that automatically deletes itself after a certain period. 
+                    It's perfect for one-time registrations, verifications, and protecting your real email from spam.
+                </p>
+            </div>
+            
+            <div class="bg-white rounded-xl shadow-lg p-6">
+                <h3 class="text-lg font-semibold text-gray-900 mb-3">
+                    <i class="fas fa-question-circle text-blue-600 mr-2"></i>
+                    How long do temporary emails last?
+                </h3>
+                <p class="text-gray-600">
+                    Our temporary email addresses are active for 24 hours. After this period, they automatically expire 
+                    and become inaccessible, ensuring your privacy and security.
+                </p>
+            </div>
+            
+            <div class="bg-white rounded-xl shadow-lg p-6">
+                <h3 class="text-lg font-semibold text-gray-900 mb-3">
+                    <i class="fas fa-question-circle text-blue-600 mr-2"></i>
+                    Can I receive multiple emails?
+                </h3>
+                <p class="text-gray-600">
+                    Yes! You can receive multiple emails to your temporary address during its active period. 
+                    All emails are displayed in your inbox with real-time updates.
+                </p>
+            </div>
+        </div>
+        
+        <div class="space-y-6">
+            <div class="bg-white rounded-xl shadow-lg p-6">
+                <h3 class="text-lg font-semibold text-gray-900 mb-3">
+                    <i class="fas fa-question-circle text-blue-600 mr-2"></i>
+                    Is my data safe and private?
+                </h3>
+                <p class="text-gray-600">
+                    Absolutely! We don't store any personal information. All emails are automatically deleted after expiration, 
+                    and we don't track or log user activity.
+                </p>
+            </div>
+            
+            <div class="bg-white rounded-xl shadow-lg p-6">
+                <h3 class="text-lg font-semibold text-gray-900 mb-3">
+                    <i class="fas fa-question-circle text-blue-600 mr-2"></i>
+                    Can I use it for important accounts?
+                </h3>
+                <p class="text-gray-600">
+                    We recommend using temporary emails only for non-critical registrations, testing, and one-time verifications. 
+                    For important accounts, use your permanent email address.
+                </p>
+            </div>
+            
+            <div class="bg-white rounded-xl shadow-lg p-6">
+                <h3 class="text-lg font-semibold text-gray-900 mb-3">
+                    <i class="fas fa-question-circle text-blue-600 mr-2"></i>
+                    How to Create a Disposable Email?
+                </h3>
+                <p class="text-gray-600">
+                    Simply click the "Generate" button above. Your temporary email will be created instantly and 
+                    ready to receive emails. No registration or personal information required.
+                </p>
             </div>
         </div>
     </div>
-    {% endif %}
+</div>
+
+<!-- How to Use Section -->
+<div class="max-w-6xl mx-auto mb-16">
+    <div class="bg-gradient-to-br from-blue-50 to-indigo-100 rounded-xl p-8">
+        <h2 class="text-3xl font-bold text-gray-900 mb-8 text-center">
+            How to Use Disposable Email Address?
+        </h2>
+        
+        <div class="grid md:grid-cols-3 gap-8">
+            <div class="text-center">
+                <div class="bg-blue-600 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <span class="text-white text-2xl font-bold">1</span>
+                </div>
+                <h3 class="text-xl font-semibold text-gray-900 mb-3">Generate Email</h3>
+                <p class="text-gray-700">
+                    Click the "Generate" button to create your temporary email address instantly. 
+                    No sign-up required.
+                </p>
+            </div>
+            
+            <div class="text-center">
+                <div class="bg-blue-600 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <span class="text-white text-2xl font-bold">2</span>
+                </div>
+                <h3 class="text-xl font-semibold text-gray-900 mb-3">Copy & Use</h3>
+                <p class="text-gray-700">
+                    Copy the generated email address and use it for registrations, 
+                    verifications, or any service that requires an email.
+                </p>
+            </div>
+            
+            <div class="text-center">
+                <div class="bg-blue-600 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <span class="text-white text-2xl font-bold">3</span>
+                </div>
+                <h3 class="text-xl font-semibold text-gray-900 mb-3">Receive Emails</h3>
+                <p class="text-gray-700">
+                    Check your inbox to receive emails instantly. All messages appear 
+                    in real-time with full content.
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
 </div>
 {% endblock %}

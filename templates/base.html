@@ -82,70 +82,120 @@
         </div>
     </nav>
 
-    <!-- Main Layout Container -->
-    <div class="flex mt-16 min-h-screen">
-        <!-- Left Sidebar with Google Ads -->
-        <aside class="w-64 bg-white shadow-md p-4 h-[calc(100vh-4rem)] overflow-y-auto">
+    <!-- Main Content with Responsive Layout -->
+    <div class="mt-16 min-h-screen bg-gray-50 flex">
+        <!-- Left Sidebar - Desktop Only -->
+        <aside class="hidden lg:block w-72 bg-white border-r border-gray-200 p-6 h-[calc(100vh-4rem)] overflow-y-auto sticky top-16">
             <!-- Google Ads Top -->
-            <div class="ad-container mb-6">
-                <div>
-                    <i class="fas fa-ad text-4xl mb-3"></i>
-                    <p class="text-sm">Google Ads<br>Advertisement Space</p>
+            <div class="ad-container mb-8">
+                <small class="text-xs text-gray-500 block mb-2 text-center">Advertisement</small>
+                <div class="bg-gradient-to-br from-blue-50 to-indigo-100 border border-gray-200 rounded-lg min-h-80 flex items-center justify-center">
+                    <div class="text-center text-gray-500">
+                        <i class="fas fa-ad text-3xl mb-3"></i>
+                        <p class="text-sm">Google Ads<br>Space Available</p>
+                    </div>
                 </div>
             </div>
             
             <!-- Google Ads Bottom -->
             <div class="ad-container">
-                <div>
-                    <i class="fas fa-bullhorn text-4xl mb-3"></i>
-                    <p class="text-sm">Google Ads<br>Advertisement Space</p>
+                <small class="text-xs text-gray-500 block mb-2 text-center">Advertisement</small>
+                <div class="bg-gradient-to-br from-purple-50 to-pink-100 border border-gray-200 rounded-lg min-h-80 flex items-center justify-center">
+                    <div class="text-center text-gray-500">
+                        <i class="fas fa-bullhorn text-3xl mb-3"></i>
+                        <p class="text-sm">Google Ads<br>Space Available</p>
+                    </div>
                 </div>
             </div>
         </aside>
 
         <!-- Main Content Area -->
-        <main class="flex-1 p-6 bg-gray-50">
+        <main class="flex-1 p-6 lg:p-8">
             {% block content %}{% endblock %}
+            
+            <!-- Mobile Ads -->
+            <div class="mt-6 lg:hidden">
+                <div class="bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg p-4 text-white text-center">
+                    <small class="block mb-2 opacity-75">Advertisement</small>
+                    <div class="text-sm">
+                        <i class="fas fa-ad text-2xl mb-2"></i>
+                        <p>Mobile Ad Space Available</p>
+                    </div>
+                </div>
+            </div>
         </main>
 
-        <!-- Right Sidebar with Google Ads -->
-        <aside class="w-64 bg-white shadow-md p-4 h-[calc(100vh-4rem)] overflow-y-auto">
+        <!-- Right Sidebar - Desktop Only -->
+        <aside class="hidden lg:block w-72 bg-white border-l border-gray-200 p-6 h-[calc(100vh-4rem)] overflow-y-auto sticky top-16">
             <!-- Google Ads Top -->
-            <div class="ad-container mb-6">
-                <div>
-                    <i class="fas fa-ad text-4xl mb-3"></i>
-                    <p class="text-sm">Google Ads<br>Advertisement Space</p>
+            <div class="ad-container mb-8">
+                <small class="text-xs text-gray-500 block mb-2 text-center">Advertisement</small>
+                <div class="bg-gradient-to-br from-green-50 to-emerald-100 border border-gray-200 rounded-lg min-h-80 flex items-center justify-center">
+                    <div class="text-center text-gray-500">
+                        <i class="fas fa-ad text-3xl mb-3"></i>
+                        <p class="text-sm">Google Ads<br>Space Available</p>
+                    </div>
                 </div>
             </div>
             
             <!-- Google Ads Bottom -->
             <div class="ad-container">
-                <div>
-                    <i class="fas fa-bullhorn text-4xl mb-3"></i>
-                    <p class="text-sm">Google Ads<br>Advertisement Space</p>
+                <small class="text-xs text-gray-500 block mb-2 text-center">Advertisement</small>
+                <div class="bg-gradient-to-br from-yellow-50 to-orange-100 border border-gray-200 rounded-lg min-h-80 flex items-center justify-center">
+                    <div class="text-center text-gray-500">
+                        <i class="fas fa-bullhorn text-3xl mb-3"></i>
+                        <p class="text-sm">Google Ads<br>Space Available</p>
+                    </div>
                 </div>
             </div>
         </aside>
     </div>
 
     <!-- Footer with Google Ads -->
-    <footer class="bg-gray-800 text-white mt-auto">
-        <div class="max-w-7xl mx-auto px-4 py-8">
+    <footer class="bg-gray-900 text-white">
+        <div class="max-w-7xl mx-auto px-8 py-12">
             <!-- Google Ads Banner in Footer -->
-            <div class="bg-gray-700 rounded-lg p-4 mb-6">
-                <div class="text-center text-gray-400">
-                    <small class="block mb-2">Advertisement</small>
-                    <div class="ad-container bg-gray-600 min-h-24">
-                        <div>
-                            <i class="fas fa-ad text-2xl mb-2"></i>
-                            <p class="text-sm">Google Ads Banner (728x90)</p>
+            <div class="bg-gray-800 rounded-xl p-6 mb-8 border border-gray-700">
+                <div class="text-center">
+                    <small class="text-gray-400 block mb-4">Advertisement</small>
+                    <div class="bg-gradient-to-r from-indigo-600 to-purple-600 rounded-lg min-h-24 flex items-center justify-center">
+                        <div class="text-center text-white">
+                            <i class="fas fa-ad text-3xl mb-2"></i>
+                            <p class="text-sm">Google Ads Banner Space (728x90)</p>
                         </div>
                     </div>
                 </div>
             </div>
             
-            <div class="text-center">
-                <p class="text-gray-400">© 2024 TempMail Professional. All rights reserved.</p>
+            <div class="grid md:grid-cols-3 gap-8 mb-8">
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">TempMail</h3>
+                    <p class="text-gray-400 text-sm">
+                        Secure, instant, and reliable temporary email service for protecting your privacy online.
+                    </p>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">Quick Links</h3>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="#" class="text-gray-400 hover:text-white transition-colors">Privacy Policy</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition-colors">Terms of Service</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition-colors">FAQ</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition-colors">Contact</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">Security</h3>
+                    <ul class="space-y-2 text-sm text-gray-400">
+                        <li><i class="fas fa-check text-green-400 mr-2"></i>SSL Encrypted</li>
+                        <li><i class="fas fa-check text-green-400 mr-2"></i>No Data Stored</li>
+                        <li><i class="fas fa-check text-green-400 mr-2"></i>Auto-Delete</li>
+                        <li><i class="fas fa-check text-green-400 mr-2"></i>GDPR Compliant</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="border-t border-gray-800 pt-6 text-center">
+                <p class="text-gray-400 text-sm">© 2024 TempMail Professional. All rights reserved.</p>
             </div>
         </div>
     </footer>
