@@ -2,39 +2,41 @@
 
 {% block content %}
 <!-- Dark Header Section with Email Display -->
-<div class="bg-gray-800 text-white py-16">
-    <div class="max-w-4xl mx-auto text-center px-6">
-        <h1 class="text-3xl font-bold mb-8">
+<div class="bg-gray-800 text-white py-8 md:py-16">
+    <div class="max-w-4xl mx-auto text-center px-4 sm:px-6">
+        <h1 class="text-2xl sm:text-3xl font-bold mb-6 md:mb-8">
             Your Temporary Email Address
         </h1>
         
         {% if active_emails and active_emails|length > 0 %}
         <!-- Display existing email -->
-        <div class="bg-gray-700 rounded-lg p-6 mb-6 max-w-2xl mx-auto">
-            <div class="flex items-center justify-center space-x-4">
-                <code class="text-xl font-mono text-white">{{ active_emails[0].email_address }}</code>
-                <button class="bg-gray-600 hover:bg-gray-500 text-white p-2 rounded copy-btn" 
-                        data-text="{{ active_emails[0].email_address }}" title="Copy">
-                    <i class="fas fa-copy"></i>
-                </button>
-                <button class="bg-green-600 hover:bg-green-500 text-white p-2 rounded" title="Refresh">
-                    <i class="fas fa-sync-alt"></i>
-                </button>
+        <div class="bg-gray-700 rounded-lg p-4 sm:p-6 mb-4 md:mb-6 max-w-2xl mx-auto">
+            <div class="flex flex-col sm:flex-row items-center justify-center sm:space-x-4 space-y-3 sm:space-y-0">
+                <code class="text-lg sm:text-xl font-mono text-white email-address-display overflow-text">{{ active_emails[0].email_address }}</code>
+                <div class="flex space-x-2">
+                    <button class="bg-gray-600 hover:bg-gray-500 text-white p-2 rounded copy-btn" 
+                            data-text="{{ active_emails[0].email_address }}" title="Copy">
+                        <i class="fas fa-copy"></i>
+                    </button>
+                    <button class="bg-green-600 hover:bg-green-500 text-white p-2 rounded" title="Refresh">
+                        <i class="fas fa-sync-alt"></i>
+                    </button>
+                </div>
             </div>
         </div>
         {% else %}
         <!-- Generate new email -->
-        <div class="bg-gray-700 rounded-lg p-6 mb-6 max-w-2xl mx-auto">
+        <div class="bg-gray-700 rounded-lg p-4 sm:p-6 mb-4 md:mb-6 max-w-2xl mx-auto">
             <form method="POST" action="{{ url_for('generate_email') }}" class="text-center">
-                <p class="text-gray-300 mb-4">Click to generate your temporary email address</p>
-                <button type="submit" class="bg-green-600 hover:bg-green-500 text-white font-semibold py-3 px-8 rounded-lg btn-transition">
+                <p class="text-gray-300 mb-4 text-sm sm:text-base">Click to generate your temporary email address</p>
+                <button type="submit" class="bg-green-600 hover:bg-green-500 text-white font-semibold py-3 px-6 sm:px-8 rounded-lg btn-transition w-full sm:w-auto">
                     Generate Email Address
                 </button>
             </form>
         </div>
         {% endif %}
         
-        <p class="text-gray-300 text-sm max-w-2xl mx-auto">
+        <p class="text-gray-300 text-xs sm:text-sm max-w-2xl mx-auto px-2">
             Forget about spam, advertising mailings, hacking and attacking robots. Keep your 
             real mailbox clean and secure. Temp Mail provides temporary, secure, anonymous, 
             free, disposable email address.
@@ -44,26 +46,26 @@
 
 <!-- Action Buttons Section -->
 {% if active_emails and active_emails|length > 0 %}
-<div class="bg-white border-b border-gray-200 py-4">
-    <div class="max-w-4xl mx-auto px-6">
-        <div class="flex justify-center space-x-6">
-            <button class="flex items-center space-x-2 text-gray-700 hover:text-black copy-btn" 
+<div class="bg-white border-b border-gray-200 py-3 md:py-4">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6">
+        <div class="flex justify-center space-x-3 sm:space-x-6 action-buttons">
+            <button class="flex items-center space-x-1 sm:space-x-2 text-gray-700 hover:text-black copy-btn text-sm sm:text-base" 
                     data-text="{{ active_emails[0].email_address }}">
                 <i class="fas fa-copy"></i>
-                <span>Copy</span>
+                <span class="hidden sm:inline">Copy</span>
             </button>
-            <button class="flex items-center space-x-2 text-gray-700 hover:text-black" onclick="refreshEmails()">
+            <button class="flex items-center space-x-1 sm:space-x-2 text-gray-700 hover:text-black text-sm sm:text-base" onclick="refreshEmails()">
                 <i class="fas fa-sync-alt refresh-icon"></i>
-                <span>Refresh</span>
+                <span class="hidden sm:inline">Refresh</span>
             </button>
-            <button class="flex items-center space-x-2 text-gray-700 hover:text-black" onclick="changeEmail()">
+            <button class="flex items-center space-x-1 sm:space-x-2 text-gray-700 hover:text-black text-sm sm:text-base" onclick="changeEmail()">
                 <i class="fas fa-edit"></i>
-                <span>Change</span>
+                <span class="hidden sm:inline">Change</span>
             </button>
             <button onclick="deleteEmail('{{ active_emails[0].id }}')" 
-                    class="flex items-center space-x-2 text-gray-700 hover:text-red-600">
+                    class="flex items-center space-x-1 sm:space-x-2 text-gray-700 hover:text-red-600 text-sm sm:text-base">
                 <i class="fas fa-times"></i>
-                <span>Delete</span>
+                <span class="hidden sm:inline">Delete</span>
             </button>
         </div>
     </div>
@@ -71,26 +73,26 @@
 {% endif %}
 
 <!-- Main Content Area with Sidebar -->
-<div class="flex max-w-7xl mx-auto">
+<div class="flex flex-col lg:flex-row max-w-7xl mx-auto">
     <!-- Main Content -->
     <div class="flex-1 bg-white">
         <!-- Email Inbox Section -->
         {% if active_emails and active_emails|length > 0 %}
-        <div class="p-6">
+        <div class="p-3 sm:p-4 lg:p-6">
             <!-- Inbox Header -->
-            <div class="bg-gray-800 text-white px-4 py-3 flex justify-between items-center">
-                <span class="font-semibold">SENDER</span>
-                <span class="font-semibold">SUBJECT</span>
+            <div class="bg-gray-800 text-white px-2 sm:px-4 py-3 flex justify-between items-center text-sm sm:text-base">
+                <span class="font-semibold flex-1">SENDER</span>
+                <span class="font-semibold flex-1 hidden sm:block">SUBJECT</span>
                 <span class="font-semibold">VIEW</span>
             </div>
             
             <!-- Email List -->
             {% if active_emails[0].messages and active_emails[0].messages|length > 0 %}
                 {% for message in active_emails[0].messages %}
-                <div class="border-b border-gray-200 px-4 py-4 hover:bg-gray-50">
-                    <div class="flex justify-between items-center mb-2">
-                        <div class="flex-1">
-                            <div class="font-medium text-gray-900">
+                <div class="border-b border-gray-200 px-2 sm:px-4 py-3 sm:py-4 hover:bg-gray-50">
+                    <div class="flex justify-between items-start sm:items-center mb-2">
+                        <div class="flex-1 min-w-0">
+                            <div class="font-medium text-gray-900 text-sm sm:text-base truncate overflow-text">
                                 {% if message.sender_name and message.sender_name != message.sender_email %}
                                     {{ message.sender_name }}
                                 {% elif message.sender_email %}
@@ -99,37 +101,38 @@
                                     {{ message.sender.split('@')[0] if message.sender else 'Unknown' }}
                                 {% endif %}
                             </div>
-                            <div class="text-sm text-gray-500">{{ message.sender_email or message.sender or 'Unknown' }}</div>
+                            <div class="text-xs sm:text-sm text-gray-500 truncate overflow-text">{{ message.sender_email or message.sender or 'Unknown' }}</div>
+                            <div class="block sm:hidden text-sm text-gray-900 mt-1 overflow-text">{{ message.subject }}</div>
                         </div>
-                        <div class="flex-1 px-4">
-                            <div class="font-medium text-gray-900">{{ message.subject }}</div>
+                        <div class="flex-1 px-2 sm:px-4 hidden sm:block min-w-0">
+                            <div class="font-medium text-gray-900 text-sm sm:text-base truncate overflow-text">{{ message.subject }}</div>
                         </div>
-                        <div>
-                            <button class="text-blue-600 hover:text-blue-800 toggle-email" data-message-id="{{ loop.index }}">
+                        <div class="ml-2">
+                            <button class="text-blue-600 hover:text-blue-800 toggle-email p-2" data-message-id="{{ loop.index }}">
                                 <i class="fas fa-eye"></i>
                             </button>
                         </div>
                     </div>
                     
                     <!-- Email Content (Initially Hidden) -->
-                    <div id="email-content-{{ loop.index }}" class="hidden mt-4 p-4 bg-gray-50 rounded-lg border" style="display: none;">
-                        <div class="mb-4 border-b border-gray-300 pb-3">
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-2 text-sm">
-                                <div><strong>From:</strong> {{ message.sender_name or (message.sender_email.split('@')[0] if message.sender_email else message.sender.split('@')[0]) }} &lt;{{ message.sender_email or message.sender }}&gt;</div>
-                                <div><strong>To:</strong> {{ active_emails[0].email_address }}</div>
-                                <div><strong>Subject:</strong> {{ message.subject }}</div>
-                                <div><strong>Date:</strong> {{ message.received_at.strftime('%Y-%m-%d %H:%M') if message.received_at else 'Unknown' }}</div>
+                    <div id="email-content-{{ loop.index }}" class="hidden mt-3 sm:mt-4 p-3 sm:p-4 bg-gray-50 rounded-lg border" style="display: none;">
+                        <div class="mb-3 sm:mb-4 border-b border-gray-300 pb-3">
+                            <div class="email-header-grid grid grid-cols-1 sm:grid-cols-2 gap-1 sm:gap-2 text-xs sm:text-sm">
+                                <div class="overflow-text"><strong>From:</strong> {{ message.sender_name or (message.sender_email.split('@')[0] if message.sender_email else message.sender.split('@')[0]) }} &lt;{{ message.sender_email or message.sender }}&gt;</div>
+                                <div class="overflow-text"><strong>To:</strong> {{ active_emails[0].email_address }}</div>
+                                <div class="overflow-text"><strong>Subject:</strong> {{ message.subject }}</div>
+                                <div class="overflow-text"><strong>Date:</strong> {{ message.received_at.strftime('%Y-%m-%d %H:%M') if message.received_at else 'Unknown' }}</div>
                             </div>
                         </div>
-                        <div class="email-body bg-white p-4 rounded border">
+                        <div class="email-body bg-white p-3 sm:p-4 rounded border">
                             {% if message.html_content and message.html_content.strip() %}
-                                <div class="prose max-w-none email-content">{{ message.html_content|safe }}</div>
+                                <div class="prose max-w-none email-content text-sm sm:text-base">{{ message.html_content|safe }}</div>
                             {% elif message.text_content and message.text_content.strip() %}
-                                <div class="whitespace-pre-wrap font-mono text-sm email-content">{{ message.text_content }}</div>
+                                <div class="whitespace-pre-wrap font-mono text-xs sm:text-sm email-content overflow-text">{{ message.text_content }}</div>
                             {% elif message.body and message.body.strip() %}
-                                <div class="whitespace-pre-wrap font-mono text-sm email-content">{{ message.body }}</div>
+                                <div class="whitespace-pre-wrap font-mono text-xs sm:text-sm email-content overflow-text">{{ message.body }}</div>
                             {% else %}
-                                <div class="text-gray-500 italic">No message content available</div>
+                                <div class="text-gray-500 italic text-sm">No message content available</div>
                             {% endif %}
                         </div>
                     </div>
@@ -149,10 +152,10 @@
         {% endif %}
 
         <!-- What is Disposable Temporary Email Section -->
-        <div class="p-6">
-            <h2 class="text-2xl font-bold text-gray-900 mb-6">What is Disposable Temporary E-mail?</h2>
-            <div class="text-gray-700 space-y-4">
-                <p>
+        <div class="p-3 sm:p-4 lg:p-6">
+            <h2 class="text-xl sm:text-2xl font-bold text-gray-900 mb-4 sm:mb-6">What is Disposable Temporary E-mail?</h2>
+            <div class="text-gray-700 space-y-3 sm:space-y-4 text-sm sm:text-base">
+                <p class="overflow-text">
                     Disposable email - is a free email service that allows to receive email at a temporary address 
                     that self-destructed after a certain time elapses. It is also known by names like: tempmail, 
                     10minutemail, throwaway email, fake-mail or trash-mail. Many forums, Wi-Fi owners, websites and 
@@ -161,23 +164,23 @@
                 </p>
             </div>
             
-            <!-- Ad Banner -->
-            <div class="my-8">
-                <div class="bg-gradient-to-r from-purple-600 to-blue-600 rounded-lg p-4 text-white text-center">
-                    <small class="block mb-2 opacity-75">Advertisement</small>
-                    <div class="text-sm">
-                        <i class="fas fa-ad text-2xl mb-2"></i>
-                        <p>Make it with Creative Cloud. Apps for photography, design, video, and web from $59.99/mo</p>
+            <!-- Ad Banner (Mobile responsive) -->
+            <div class="my-6 sm:my-8">
+                <div class="bg-gradient-to-r from-purple-600 to-blue-600 rounded-lg p-3 sm:p-4 text-white text-center">
+                    <small class="block mb-2 opacity-75 text-xs sm:text-sm">Advertisement</small>
+                    <div class="text-xs sm:text-sm">
+                        <i class="fas fa-ad text-xl sm:text-2xl mb-2"></i>
+                        <p class="overflow-text">Make it with Creative Cloud. Apps for photography, design, video, and web from $59.99/mo</p>
                     </div>
                 </div>
             </div>
             
-            <h3 class="text-xl font-bold text-gray-900 mb-4">Popular Articles</h3>
+            <h3 class="text-lg sm:text-xl font-bold text-gray-900 mb-3 sm:mb-4">Popular Articles</h3>
         </div>
     </div>
     
-    <!-- Right Sidebar -->
-    <div class="w-80 bg-white border-l border-gray-200">
+    <!-- Right Sidebar (Hidden on mobile and tablet) -->
+    <div class="hidden lg:block w-80 bg-white border-l border-gray-200">
         <!-- Advertisement Space -->
         <div class="p-4">
             <div class="bg-gradient-to-br from-purple-600 to-blue-600 rounded-lg p-6 text-white text-center min-h-80">
