@@ -22,6 +22,12 @@ def index():
         is_active=True
     ).filter(TempEmail.expires_at > datetime.utcnow()).all()
     
+    # Fetch messages for active emails
+    for email in active_emails:
+        if email.mail_tm_id:
+            # Refresh messages from mail.tm service
+            mail_tm_service.fetch_emails_for_account(email, db, EmailMessage)
+    
     return render_template('index.html', 
                          active_emails=active_emails)
 
