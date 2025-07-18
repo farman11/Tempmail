@@ -112,7 +112,7 @@
                     </div>
                     
                     <!-- Email Content (Initially Hidden) -->
-                    <div id="email-content-{{ loop.index }}" class="hidden mt-4 p-4 bg-gray-50 rounded-lg border">
+                    <div id="email-content-{{ loop.index }}" class="hidden mt-4 p-4 bg-gray-50 rounded-lg border" style="display: none;">
                         <div class="mb-4 border-b border-gray-300 pb-3">
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-2 text-sm">
                                 <div><strong>From:</strong> {{ message.sender_name or (message.sender_email.split('@')[0] if message.sender_email else message.sender.split('@')[0]) }} &lt;{{ message.sender_email or message.sender }}&gt;</div>
@@ -220,10 +220,8 @@ function refreshEmails() {
                 // Show success message and reload page to display new emails
                 alert(`Found ${data.new_messages} new message(s)! Refreshing...`);
                 location.reload();
-            } else {
-                // Show no new messages
-                alert('No new messages found');
             }
+            // Removed alert for no new messages to avoid interruption
         } else {
             alert('Error checking for emails: ' + (data.message || 'Unknown error'));
         }
@@ -282,28 +280,29 @@ document.addEventListener('DOMContentLoaded', function() {
     document.querySelectorAll('.toggle-email').forEach(button => {
         button.addEventListener('click', function(e) {
             e.preventDefault();
-            console.log('Toggle button clicked');
+            e.stopPropagation();
             
             const messageId = this.getAttribute('data-message-id');
-            console.log('Message ID:', messageId);
-            
             const content = document.getElementById('email-content-' + messageId);
-            console.log('Content element:', content);
-            
             const icon = this.querySelector('i');
             
             if (content) {
-                if (content.classList.contains('hidden')) {
+                // Simple toggle - if display is none or has hidden class, show it
+                if (content.style.display === 'none' || content.classList.contains('hidden')) {
+                    // Show the content
+                    content.style.display = 'block';
                     content.classList.remove('hidden');
                     icon.className = 'fas fa-eye-slash';
                     console.log('Showing email content');
                 } else {
+                    // Hide the content
+                    content.style.display = 'none';
                     content.classList.add('hidden');
                     icon.className = 'fas fa-eye';
                     console.log('Hiding email content');
                 }
             } else {
-                console.error('Could not find content element with ID: email-content-' + messageId);
+                console.error('Content element not found for message ID:', messageId);
             }
         });
     });
