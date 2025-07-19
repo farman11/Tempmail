@@ -1,0 +1,90 @@
+name: Deploy to Production
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: tempmail_test
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up Python 3.11
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+        
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        pip install pytest pytest-cov
+        
+    - name: Set up environment variables
+      run: |
+        echo "DATABASE_URL=postgresql://postgres:postgres@localhost:5432/tempmail_test" >> .env
+        echo "SESSION_SECRET=test-secret-key" >> .env
+        echo "FLASK_ENV=testing" >> .env
+        
+    - name: Run tests
+      run: |
+        pytest --cov=. --cov-report=xml
+        
+    - name: Upload coverage to Codecov
+      uses: codecov/codecov-action@v3
+      with:
+        file: ./coverage.xml
+        flags: unittests
+        name: codecov-umbrella
+
+  build:
+    needs: test
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Build Docker image
+      run: |
+        docker build -t tempmail:${{ github.sha }} .
+        docker tag tempmail:${{ github.sha }} tempmail:latest
+        
+    - name: Test Docker image
+      run: |
+        docker run --rm -d --name tempmail-test -p 5000:5000 tempmail:latest
+        sleep 10
+        curl -f http://localhost:5000/ || exit 1
+        docker stop tempmail-test
+
+  deploy:
+    needs: [test, build]
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Deploy to production
+      run: |
+        echo "Add your deployment commands here"
+        # Example: Deploy to your hosting provider
+        # ssh user@server 'cd /path/to/app && git pull && docker-compose up -d'
