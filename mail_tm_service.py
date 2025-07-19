@@ -125,6 +125,16 @@ class MailTMService:
     def create_real_temp_email(self, session_id, db, TempEmail):
         """Create a real temporary email using mail.tm"""
         try:
+            # Add rate limiting check
+            import time
+            if not hasattr(self, '_last_account_creation'):
+                self._last_account_creation = 0
+            
+            # Wait at least 5 seconds between account creations to avoid rate limiting
+            time_since_last = time.time() - self._last_account_creation
+            if time_since_last < 5:
+                time.sleep(5 - time_since_last)
+            
             domains = self.get_available_domains()
             if not domains:
                 logging.error("No domains available")
@@ -143,7 +153,10 @@ class MailTMService:
             
             # Create account on mail.tm
             account = self.create_account(email_address, password)
+            self._last_account_creation = time.time()
+            
             if not account:
+                logging.error(f"Failed to create account for {email_address}")
                 return None
             
             # Create TempEmail record
@@ -160,6 +173,7 @@ class MailTMService:
             temp_email.mail_tm_password = password
             temp_email.mail_tm_id = account.get('id')
             
+            logging.info(f"Successfully created temp email: {email_address}")
             return temp_email
             
         except Exception as e:

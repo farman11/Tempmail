@@ -172,15 +172,27 @@ setInterval(function() {
             'Content-Type': 'application/json',
         }
     })
-    .then(response => response.json())
+    .then(response => {
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        }
+        return response.json();
+    })
     .then(data => {
         console.log('Auto-refresh response:', data);
-        if (data.status === 'success' && data.messages && data.messages.length > 0) {
+        if (data.status === 'success') {
             // Check if we have new messages by comparing with current count
-            const currentMessageCount = document.querySelectorAll('.message-item').length;
-            if (data.messages.length > currentMessageCount) {
+            const currentMessageCount = document.querySelectorAll('.message-item, .email-item, [data-message-id]').length;
+            const newMessageCount = data.count || (data.messages ? data.messages.length : 0);
+            
+            console.log(`Current: ${currentMessageCount}, New: ${newMessageCount}`);
+            
+            if (newMessageCount > currentMessageCount) {
+                console.log('New messages detected, reloading...');
                 location.reload();
             }
+        } else {
+            console.warn('Auto-refresh failed:', data.message);
         }
     })
     .catch(error => {

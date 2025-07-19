@@ -102,16 +102,29 @@ def email_inbox(email_id):
 def fetch_emails(email_id):
     session_id = session.get('session_id')
     
+    logging.info(f"Fetch emails called - Email ID: {email_id}, Session ID: {session_id}")
+    logging.info(f"Available temp_emails: {list(temp_emails.keys())}")
+    
     # Verify ownership
     temp_email = temp_emails.get(email_id)
-    if not temp_email or temp_email.session_id != session_id or not temp_email.is_active:
-        return jsonify({'status': 'error', 'message': 'Email not found or expired'}), 404
+    if not temp_email:
+        logging.error(f"Email not found: {email_id}")
+        return jsonify({'status': 'error', 'message': 'Email not found'}), 404
+    
+    if temp_email.session_id != session_id:
+        logging.error(f"Session mismatch: {temp_email.session_id} != {session_id}")
+        return jsonify({'status': 'error', 'message': 'Session mismatch'}), 403
+    
+    if not temp_email.is_active:
+        logging.error(f"Email inactive: {email_id}")
+        return jsonify({'status': 'error', 'message': 'Email inactive'}), 404
     
     try:
         # Fetch emails from mail.tm service if available
-        if temp_email.mail_tm_id:
+        if hasattr(temp_email, 'mail_tm_id') and temp_email.mail_tm_id:
             logging.info(f"Fetching emails for account: {temp_email.email_address}")
-            mail_tm_service.fetch_emails_for_account(temp_email, None, EmailMessage)
+            new_count = mail_tm_service.fetch_emails_for_account(temp_email, None, EmailMessage)
+            logging.info(f"Fetched {new_count} new messages")
         
         # Get updated messages
         messages = []
@@ -133,9 +146,10 @@ def fetch_emails(email_id):
         # Sort messages by received date (newest first)
         messages.sort(key=lambda x: x['received_at'], reverse=True)
         
-        return jsonify({'status': 'success', 'messages': messages})
+        logging.info(f"Returning {len(messages)} messages for email {email_id}")
+        return jsonify({'status': 'success', 'messages': messages, 'count': len(messages)})
     except Exception as e:
-        logging.error(f"Error fetching emails: {e}")
+        logging.error(f"Error fetching emails: {e}", exc_info=True)
         return jsonify({'status': 'error', 'message': 'Failed to check for new messages'}), 500
 
 @app.route('/delete-email/<email_id>', methods=['POST'])
@@ -206,12 +220,38 @@ def sitemap_xml():
     response.headers['Content-Type'] = 'application/xml'
     return response
 
+# Test route to add sample emails for testing
+@app.route('/add-test-email/<email_id>')
+def add_test_email(email_id):
+    session_id = session.get('session_id')
+    
+    # Verify email exists and ownership
+    temp_email = temp_emails.get(email_id)
+    if not temp_email or temp_email.session_id != session_id:
+        flash('Email not found.', 'error')
+        return redirect(url_for('index'))
+    
+    # Add a test email message
+    test_message = EmailMessage(
+        temp_email_id=email_id,
+        sender_email="test@example.com",
+        sender_name="Test Sender",
+        subject="Test Email Message",
+        body="This is a test email message to verify the email display functionality.",
+        text_content="This is a test email message to verify the email display functionality.",
+        html_content="<p>This is a test email message to verify the email display functionality.</p>"
+    )
+    
+    email_messages[test_message.id] = test_message
+    flash('Test email added successfully!', 'success')
+    return redirect(url_for('email_inbox', email_id=email_id))
+
 # Helper function to clean expired emails
 def cleanup_expired_emails():
     """Remove expired emails from memory"""
     expired_emails = []
     for email_id, email in temp_emails.items():
-        if email.is_expired:
+        if hasattr(email, 'is_expired') and email.is_expired:
             expired_emails.append(email_id)
     
     for email_id in expired_emails:
