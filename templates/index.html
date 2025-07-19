@@ -88,20 +88,20 @@
 <div class="bg-white border-b border-gray-200 py-3 md:py-4">
     <div class="max-w-4xl mx-auto px-4 sm:px-6">
         <div class="flex justify-center space-x-3 sm:space-x-6 action-buttons">
-            <button class="flex items-center space-x-1 sm:space-x-2 text-gray-700 hover:text-blue-600 hover:bg-blue-50 px-3 py-2 rounded transition-all duration-200 copy-btn text-sm sm:text-base font-medium" 
+            <button class="flex items-center space-x-1 sm:space-x-2 text-gray-700 hover:text-blue-600 hover:bg-blue-50 px-2 py-1 rounded transition-all duration-200 copy-btn text-sm sm:text-base" 
                     data-text="{{ active_emails[0].email_address }}">
-                <i class="fas fa-copy text-gray-600"></i>
-                <span class="text-gray-700">Copy</span>
+                <i class="fas fa-copy"></i>
+                <span class="hidden sm:inline">Copy</span>
             </button>
 
-            <button class="flex items-center space-x-1 sm:space-x-2 text-gray-700 hover:text-green-600 hover:bg-green-50 px-3 py-2 rounded transition-all duration-200 text-sm sm:text-base font-medium" onclick="refreshEmails()">
-                <i class="fas fa-sync-alt text-gray-600"></i>
-                <span class="text-gray-700">Refresh</span>
+            <button class="flex items-center space-x-1 sm:space-x-2 text-gray-700 hover:text-green-600 hover:bg-green-50 px-2 py-1 rounded transition-all duration-200 text-sm sm:text-base" onclick="refreshEmails()">
+                <i class="fas fa-sync-alt"></i>
+                <span class="hidden sm:inline">Refresh</span>
             </button>
             
-            <button class="flex items-center space-x-1 sm:space-x-2 text-gray-700 hover:text-purple-600 hover:bg-purple-50 px-3 py-2 rounded transition-all duration-200 text-sm sm:text-base font-medium" onclick="changeEmail()">
-                <i class="fas fa-edit text-gray-600"></i>
-                <span class="text-gray-700">Change</span>
+            <button class="flex items-center space-x-1 sm:space-x-2 text-gray-700 hover:text-purple-600 hover:bg-purple-50 px-2 py-1 rounded transition-all duration-200 text-sm sm:text-base" onclick="changeEmail()">
+                <i class="fas fa-edit"></i>
+                <span class="hidden sm:inline">Change</span>
             </button>
         </div>
     </div>
