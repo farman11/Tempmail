@@ -73,8 +73,26 @@
 </div>
 {% endif %}
 
-<!-- Main Content Area with Sidebar -->
-<div class="flex flex-col lg:flex-row max-w-7xl mx-auto">
+<!-- Main Content Area with Sidebars -->
+<div class="flex flex-col xl:flex-row max-w-screen-2xl mx-auto">
+    <!-- Left Sidebar (Hidden on mobile, tablet, and large screens - only visible on extra large screens) -->
+    <div class="hidden xl:block w-80 bg-white border-r border-gray-200">
+        <!-- Advertisement Space -->
+        <div class="p-4">
+            <div class="bg-gradient-to-br from-purple-600 to-blue-600 rounded-lg p-6 text-white text-center min-h-80">
+                <small class="block mb-2 opacity-75">Advertisement</small>
+                <div class="text-center">
+                    <i class="fas fa-ad text-3xl mb-3"></i>
+                    <h3 class="text-lg font-bold mb-2">Make it with Creative Cloud</h3>
+                    <p class="text-sm mb-4">Apps for photography, design, video, and web from $59.99/mo</p>
+                    <button class="bg-white text-purple-600 px-4 py-2 rounded font-semibold">
+                        Join now
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
     <!-- Main Content -->
     <div class="flex-1 bg-white">
         <!-- Email Inbox Section -->
@@ -188,8 +206,8 @@
         </div>
     </div>
     
-    <!-- Right Sidebar (Hidden on mobile and tablet) -->
-    <div class="hidden lg:block w-80 bg-white border-l border-gray-200">
+    <!-- Right Sidebar (Hidden on mobile, tablet, and large screens - only visible on extra large screens) -->
+    <div class="hidden xl:block w-80 bg-white border-l border-gray-200">
         <!-- Advertisement Space -->
         <div class="p-4">
             <div class="bg-gradient-to-br from-purple-600 to-blue-600 rounded-lg p-6 text-white text-center min-h-80">
