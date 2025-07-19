@@ -126,11 +126,11 @@
                             </div>
                         </div>
                         <div class="email-body bg-white p-3 sm:p-4 rounded border">
-                            {% if message.html_content and message.html_content.strip() %}
+                            {% if message.html_content and message.html_content|string and message.html_content|string|trim %}
                                 <div class="prose max-w-none email-content text-sm sm:text-base">{{ message.html_content|safe }}</div>
-                            {% elif message.text_content and message.text_content.strip() %}
+                            {% elif message.text_content and message.text_content|string and message.text_content|string|trim %}
                                 <div class="whitespace-pre-wrap text-xs sm:text-sm email-content overflow-text">{{ message.text_content }}</div>
-                            {% elif message.body and message.body.strip() %}
+                            {% elif message.body and message.body|string and message.body|string|trim %}
                                 <div class="whitespace-pre-wrap text-xs sm:text-sm email-content overflow-text">{{ message.body }}</div>
                             {% else %}
                                 <div class="text-gray-500 italic text-sm">No message content available</div>
