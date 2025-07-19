@@ -110,16 +110,33 @@ def process_email_content(html_content, text_content, body_content):
     Returns:
         Formatted HTML string with preserved links and styling
     """
+    # Helper function to safely convert content to string
+    def safe_to_string(content):
+        if content is None:
+            return ''
+        elif isinstance(content, list):
+            # If it's a list, join the elements
+            return ' '.join(str(item) for item in content if item)
+        elif isinstance(content, str):
+            return content
+        else:
+            return str(content)
+    
+    # Convert all content to strings safely
+    html_str = safe_to_string(html_content).strip()
+    text_str = safe_to_string(text_content).strip()
+    body_str = safe_to_string(body_content).strip()
+    
     # Determine the best content to use
     content = ''
-    if html_content and html_content.strip():
-        content = html_content.strip()
+    if html_str:
+        content = html_str
         content_type = 'html'
-    elif text_content and text_content.strip():
-        content = text_content.strip()
+    elif text_str:
+        content = text_str
         content_type = 'text'
-    elif body_content and body_content.strip():
-        content = body_content.strip()
+    elif body_str:
+        content = body_str
         content_type = 'text'
     else:
         return '<div class="text-gray-500 italic text-center py-8"><p>No message content available</p></div>'
