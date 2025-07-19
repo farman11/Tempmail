@@ -1,23 +1,14 @@
 from datetime import datetime, timedelta
-from app import db
 import uuid
 
-class TempEmail(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    email_address = db.Column(db.String(255), unique=True, nullable=False)
-    session_id = db.Column(db.String(255), nullable=False)
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
-    expires_at = db.Column(db.DateTime, nullable=False)
-    is_active = db.Column(db.Boolean, default=True)
-    
-    # Mail.tm integration fields
-    mail_tm_password = db.Column(db.String(255), nullable=True)
-    mail_tm_id = db.Column(db.String(255), nullable=True)
-    
+class TempEmail:
     def __init__(self, session_id, hours=24, use_real_email=True):
+        self.id = str(uuid.uuid4())
         self.session_id = session_id
         self.created_at = datetime.utcnow()
         self.is_active = True
+        self.mail_tm_password = None
+        self.mail_tm_id = None
         
         if not use_real_email:
             # Fallback to local domain
@@ -32,25 +23,20 @@ class TempEmail(db.Model):
     
     def deactivate(self):
         self.is_active = False
-        db.session.commit()
 
-class EmailMessage(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    temp_email_id = db.Column(db.Integer, db.ForeignKey('temp_email.id'), nullable=False)
-    sender = db.Column(db.String(255), nullable=False)  # Keeping for backward compatibility
-    sender_email = db.Column(db.String(255), nullable=False)
-    sender_name = db.Column(db.String(255), nullable=True)
-    subject = db.Column(db.String(500), nullable=True)
-    body = db.Column(db.Text, nullable=True)
-    text_content = db.Column(db.Text, nullable=True)
-    html_content = db.Column(db.Text, nullable=True)
-    received_at = db.Column(db.DateTime, default=datetime.utcnow)
-    is_spam = db.Column(db.Boolean, default=False)
-    is_read = db.Column(db.Boolean, default=False)
-    
-    # Mail.tm integration field
-    mail_tm_id = db.Column(db.String(255), nullable=True)
-    
-    temp_email = db.relationship('TempEmail', backref=db.backref('messages', lazy=True))
-
-
+class EmailMessage:
+    def __init__(self, temp_email_id, sender_email, sender_name=None, subject=None, body=None, 
+                 text_content=None, html_content=None, mail_tm_id=None):
+        self.id = str(uuid.uuid4())
+        self.temp_email_id = temp_email_id
+        self.sender = sender_email  # Keeping for backward compatibility
+        self.sender_email = sender_email
+        self.sender_name = sender_name
+        self.subject = subject
+        self.body = body
+        self.text_content = text_content
+        self.html_content = html_content
+        self.received_at = datetime.utcnow()
+        self.is_spam = False
+        self.is_read = False
+        self.mail_tm_id = mail_tm_id

@@ -146,7 +146,7 @@ class MailTMService:
             if not account:
                 return None
             
-            # Create TempEmail record in our database
+            # Create TempEmail record
             temp_email = TempEmail(
                 session_id=session_id,
                 use_real_email=True  # This prevents the __init__ from setting local email
@@ -159,9 +159,6 @@ class MailTMService:
             # Store mail.tm credentials
             temp_email.mail_tm_password = password
             temp_email.mail_tm_id = account.get('id')
-            
-            db.session.add(temp_email)
-            db.session.commit()
             
             return temp_email
             
@@ -184,12 +181,17 @@ class MailTMService:
             messages = self.get_messages(token)
             new_messages = 0
             
+            # Import email_messages from app module
+            from app import email_messages
+            
             for msg in messages:
-                # Check if message already exists
-                existing = EmailMessage.query.filter_by(
-                    temp_email_id=temp_email.id,
-                    mail_tm_id=msg['id']
-                ).first()
+                # Check if message already exists in memory
+                existing = False
+                for msg_id, stored_msg in email_messages.items():
+                    if (stored_msg.temp_email_id == temp_email.id and 
+                        stored_msg.mail_tm_id == msg['id']):
+                        existing = True
+                        break
                 
                 if existing:
                     continue
@@ -204,29 +206,29 @@ class MailTMService:
                 sender_email = from_info.get('address', 'Unknown')
                 sender_name = from_info.get('name', '')
                 
-                # Create EmailMessage record
+                # Create EmailMessage object
                 email_msg = EmailMessage(
                     temp_email_id=temp_email.id,
-                    sender=sender_email,  # Backward compatibility
                     sender_email=sender_email,
                     sender_name=sender_name if sender_name else None,
                     subject=details.get('subject', ''),
-                    body=details.get('text', details.get('html', '')),  # Backward compatibility
+                    body=details.get('text', details.get('html', '')),
                     text_content=details.get('text', ''),
                     html_content=details.get('html', ''),
-                    received_at=datetime.fromisoformat(details['createdAt'].replace('Z', '+00:00')),
-                    is_spam=False,  # mail.tm handles spam filtering
-                    is_read=False
+                    mail_tm_id=msg['id']
                 )
                 
-                # Store mail.tm message ID for deduplication
-                email_msg.mail_tm_id = msg['id']
+                # Set received_at
+                try:
+                    email_msg.received_at = datetime.fromisoformat(details['createdAt'].replace('Z', '+00:00'))
+                except:
+                    email_msg.received_at = datetime.utcnow()
                 
-                db.session.add(email_msg)
+                # Store in memory
+                email_messages[email_msg.id] = email_msg
                 new_messages += 1
             
             if new_messages > 0:
-                db.session.commit()
                 logging.info(f"Fetched {new_messages} new messages for {temp_email.email_address}")
             
             return new_messages
@@ -238,13 +240,13 @@ class MailTMService:
     def fetch_all_emails(self, db, TempEmail, EmailMessage):
         """Fetch emails for all active temp email accounts"""
         try:
-            active_emails = TempEmail.query.filter_by(is_active=True).filter(
-                TempEmail.expires_at > datetime.utcnow()
-            ).all()
+            from app import temp_emails
             
             total_new = 0
-            for temp_email in active_emails:
-                if hasattr(temp_email, 'mail_tm_password'):
+            for email_id, temp_email in temp_emails.items():
+                if (temp_email.is_active and 
+                    not temp_email.is_expired and 
+                    hasattr(temp_email, 'mail_tm_password')):
                     new_count = self.fetch_emails_for_account(temp_email, db, EmailMessage)
                     total_new += new_count
             
