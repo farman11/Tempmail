@@ -179,22 +179,7 @@
         color: #374151 !important;
     }
     
-    /* Force all text elements to gray on very small screens */
-    * {
-        color: #374151 !important;
-    }
-    
-    /* Except for white text on dark backgrounds */
-    .bg-gray-800 *,
-    .bg-gray-700 *,
-    .text-white,
-    .bg-blue-600 *,
-    .bg-green-600 *,
-    .bg-purple-600 *,
-    .bg-red-600 *,
-    .bg-indigo-600 * {
-        color: white !important;
-    }
+
 }
 
 /* Tablet Styles (768px - 1023px) */
