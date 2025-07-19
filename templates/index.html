@@ -18,8 +18,8 @@
                             data-text="{{ active_emails[0].email_address }}" title="Copy">
                         <i class="fas fa-copy"></i>
                     </button>
-                    <button class="bg-green-600 hover:bg-green-500 text-white p-2 rounded" title="Refresh">
-                        <i class="fas fa-sync-alt"></i>
+                    <button class="bg-green-600 hover:bg-green-500 text-white p-2 rounded-full" title="Refresh" onclick="refreshEmails()">
+                        <i class="fas fa-sync-alt refresh-icon-header"></i>
                     </button>
                 </div>
             </div>
@@ -54,9 +54,8 @@
                 <i class="fas fa-copy"></i>
                 <span class="hidden sm:inline">Copy</span>
             </button>
-            <button class="flex items-center space-x-1 sm:space-x-2 text-gray-700 hover:text-black text-sm sm:text-base" onclick="refreshEmails()">
-                <i class="fas fa-sync-alt refresh-icon"></i>
-                <span class="hidden sm:inline">Refresh</span>
+            <button class="flex items-center justify-center w-10 h-10 rounded-full bg-gray-100 hover:bg-gray-200 text-gray-700 hover:text-black transition-all" onclick="refreshEmails()">
+                <i class="fas fa-sync-alt refresh-icon text-lg"></i>
             </button>
             <button class="flex items-center space-x-1 sm:space-x-2 text-gray-700 hover:text-black text-sm sm:text-base" onclick="changeEmail()">
                 <i class="fas fa-edit"></i>
@@ -143,8 +142,8 @@
                 <i class="fas fa-inbox text-4xl mb-4"></i>
                 <p>No emails received yet</p>
                 <p class="text-sm">Emails will appear here automatically</p>
-                <button onclick="location.reload()" class="mt-4 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
-                    Check for New Emails
+                <button onclick="refreshEmails()" class="mt-4 bg-blue-600 text-white p-3 rounded-full hover:bg-blue-700 refresh-emails-btn">
+                    <i class="fas fa-sync-alt text-xl"></i>
                 </button>
             </div>
             {% endif %}
@@ -203,11 +202,12 @@
 <script>
 // Real-time email refresh functionality
 function refreshEmails() {
-    const refreshIcon = document.querySelector('.refresh-icon');
-    const originalClass = refreshIcon.className;
+    const refreshIcons = document.querySelectorAll('.refresh-icon, .refresh-icon-header');
     
-    // Add spinning animation
-    refreshIcon.className = 'fas fa-sync-alt fa-spin';
+    // Add spinning animation to all refresh icons
+    refreshIcons.forEach(icon => {
+        icon.classList.add('refresh-spinning');
+    });
     
     // Call the fetch-emails endpoint
     fetch('/fetch-emails', {
@@ -220,23 +220,62 @@ function refreshEmails() {
     .then(data => {
         if (data.status === 'success') {
             if (data.new_messages > 0) {
-                // Show success message and reload page to display new emails
-                alert(`Found ${data.new_messages} new message(s)! Refreshing...`);
+                // Silently reload page to display new emails
                 location.reload();
             }
-            // Removed alert for no new messages to avoid interruption
-        } else {
-            alert('Error checking for emails: ' + (data.message || 'Unknown error'));
+            // No alerts - just silent refresh
         }
+        // No error alerts - just silent operation
     })
     .catch(error => {
         console.error('Error:', error);
-        alert('Error checking for emails');
+        // No error alerts - just log to console
     })
     .finally(() => {
-        // Reset icon
-        refreshIcon.className = originalClass;
+        // Remove spinning animation
+        refreshIcons.forEach(icon => {
+            icon.classList.remove('refresh-spinning');
+        });
     });
+}
+
+// Automatic refresh functionality
+function startAutoRefresh() {
+    // Auto-refresh every 30 seconds
+    setInterval(() => {
+        const refreshIcons = document.querySelectorAll('.refresh-icon, .refresh-icon-header');
+        
+        // Add subtle auto-refresh animation
+        refreshIcons.forEach(icon => {
+            icon.classList.add('auto-refresh-spinning');
+        });
+        
+        // Perform silent refresh
+        fetch('/fetch-emails', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'success' && data.new_messages > 0) {
+                // Silently reload page to display new emails
+                location.reload();
+            }
+        })
+        .catch(error => {
+            console.error('Auto-refresh error:', error);
+        })
+        .finally(() => {
+            // Remove auto-refresh animation
+            setTimeout(() => {
+                refreshIcons.forEach(icon => {
+                    icon.classList.remove('auto-refresh-spinning');
+                });
+            }, 2000);
+        });
+    }, 30000); // 30 seconds
 }
 
 // Change email function
@@ -329,10 +368,10 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 
-// Auto-refresh every 30 seconds
-setInterval(function() {
-    refreshEmails();
-}, 30000);
+// Start auto-refresh functionality
+document.addEventListener('DOMContentLoaded', function() {
+    startAutoRefresh();
+});
 
 // Process email content for better formatting and convert links to buttons
 function processEmailContentInline(emailBody) {
