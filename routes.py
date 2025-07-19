@@ -23,12 +23,46 @@ def index():
     for email_id, email in temp_emails.items():
         if (email.session_id == session_id and 
             email.is_active and 
-            not email.is_expired):
+            not hasattr(email, 'is_expired') or not email.is_expired):
             active_emails.append(email)
+    
+    # AUTO-GENERATE EMAIL: If no active emails, create one automatically
+    if not active_emails:
+        logging.info(f"No active emails for session {session_id}, creating one automatically")
+        
+        # Delete any old emails for this session first
+        to_delete = []
+        for email_id, email in temp_emails.items():
+            if email.session_id == session_id:
+                to_delete.append(email_id)
+        
+        for email_id in to_delete:
+            # Delete associated messages first
+            messages_to_delete = []
+            for msg_id, msg in email_messages.items():
+                if msg.temp_email_id == email_id:
+                    messages_to_delete.append(msg_id)
+            
+            for msg_id in messages_to_delete:
+                del email_messages[msg_id]
+            
+            del temp_emails[email_id]
+        
+        # Create new temporary email automatically
+        temp_email = mail_tm_service.create_real_temp_email(session_id, None, TempEmail)
+        
+        if temp_email:
+            temp_emails[temp_email.id] = temp_email
+            active_emails = [temp_email]
+            logging.info(f"Auto-created email: {temp_email.email_address}")
+            # Redirect to the inbox page immediately when email is auto-created
+            return redirect(url_for('email_inbox', email_id=temp_email.id))
+        else:
+            logging.error("Failed to auto-create email")
     
     # Fetch messages for active emails
     for email in active_emails:
-        if email.mail_tm_id:
+        if hasattr(email, 'mail_tm_id') and email.mail_tm_id:
             # Refresh messages from mail.tm service
             mail_tm_service.fetch_emails_for_account(email, None, EmailMessage)
     

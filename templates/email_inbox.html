@@ -158,7 +158,8 @@
 
 {% block scripts %}
 <script>
-// Auto-refresh every 30 seconds - silent
+// Auto-refresh every 30 seconds - silent (only on email inbox pages)
+{% if temp_email and temp_email.id %}
 setInterval(function() {
     const refreshIcon = document.querySelector('.refresh-btn i');
     if (refreshIcon) {
@@ -182,7 +183,7 @@ setInterval(function() {
         console.log('Auto-refresh response:', data);
         if (data.status === 'success') {
             // Check if we have new messages by comparing with current count
-            const currentMessageCount = document.querySelectorAll('.message-item, .email-item, [data-message-id]').length;
+            const currentMessageCount = document.querySelectorAll('.email-item, [data-message-id], .bg-white.rounded-lg.shadow-md.p-4').length;
             const newMessageCount = data.count || (data.messages ? data.messages.length : 0);
             
             console.log(`Current: ${currentMessageCount}, New: ${newMessageCount}`);
@@ -206,6 +207,7 @@ setInterval(function() {
         }
     });
 }, 30000);
+{% endif %}
 
 // Remove the mark-read functionality since route doesn't exist
 // Messages are automatically marked as read when viewed
@@ -223,6 +225,11 @@ if (refreshBtn) {
 function fetchNewEmails() {
     const button = document.querySelector('.refresh-btn');
     const icon = button.querySelector('i');
+    
+    if (!button || !icon) {
+        console.warn('Refresh button or icon not found');
+        return;
+    }
     
     // Add spinning animation
     icon.classList.add('refresh-spinning');
