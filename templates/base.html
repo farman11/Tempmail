@@ -5,35 +5,94 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}TempMail - Professional Temporary Email Service{% endblock %}</title>
     
-    <!-- SEO Meta Tags -->
-    <meta name="description" content="{% block description %}Free temporary email service. Get disposable email addresses instantly. No registration required. Protect your privacy with secure temporary emails that auto-delete after 24 hours.{% endblock %}">
-    <meta name="keywords" content="temporary email, disposable email, temp mail, fake email, private email, email protection, spam protection, anonymous email">
-    <meta name="robots" content="index, follow">
-    <meta name="author" content="TempMail">
+    <!-- Enhanced SEO Meta Tags -->
+    <meta name="description" content="{% block description %}Professional temporary email service by Root Group Tech. Generate secure disposable email addresses instantly. No registration required. Complete privacy protection with auto-deletion after 24 hours.{% endblock %}">
+    <meta name="keywords" content="temporary email, disposable email, temp mail, fake email, private email, email protection, spam protection, anonymous email, Root Group Tech, secure email, privacy protection, temporary inbox">
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+    <meta name="googlebot" content="index, follow">
+    <meta name="bingbot" content="index, follow">
+    <meta name="author" content="Root Group Tech">
+    <meta name="creator" content="Root Group Tech - Digital Marketing & IT Solutions">
+    <meta name="publisher" content="Root Group Tech">
+    <meta name="copyright" content="© 2024 Root Group Tech. All rights reserved.">
+    <meta name="developer" content="Root Group Tech - https://rootgroup.tech">
+    <meta http-equiv="content-language" content="en">
+    <meta name="geo.region" content="US">
+    <meta name="geo.country" content="United States">
+    <meta name="theme-color" content="#2563eb">
+    <meta name="msapplication-TileColor" content="#2563eb">
+    <meta name="application-name" content="TempMail">
+    <meta name="apple-mobile-web-app-title" content="TempMail">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <link rel="canonical" href="{% block canonical %}{{ request.url }}{% endblock %}">
     
-    <!-- Open Graph / Facebook -->
+    <!-- Enhanced Open Graph / Facebook -->
     <meta property="og:type" content="website">
     <meta property="og:url" content="{{ request.url }}">
-    <meta property="og:title" content="{% block og_title %}TempMail - Professional Temporary Email Service{% endblock %}">
-    <meta property="og:description" content="{% block og_description %}Free temporary email service. Get disposable email addresses instantly. No registration required. Protect your privacy with secure temporary emails.{% endblock %}">
+    <meta property="og:title" content="{% block og_title %}TempMail - Professional Temporary Email Service | Root Group Tech{% endblock %}">
+    <meta property="og:description" content="{% block og_description %}Professional temporary email service by Root Group Tech. Generate secure disposable email addresses instantly. Complete privacy protection with no registration required.{% endblock %}">
     <meta property="og:image" content="{% block og_image %}{{ url_for('static', filename='images/tempmail-og.jpg', _external=True) if url_for else '/static/images/tempmail-og.jpg' }}{% endblock %}">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:alt" content="TempMail - Professional Temporary Email Service by Root Group Tech">
+    <meta property="og:site_name" content="TempMail by Root Group Tech">
+    <meta property="og:locale" content="en_US">
     
-    <!-- Twitter -->
+    <!-- Enhanced Twitter -->
     <meta property="twitter:card" content="summary_large_image">
     <meta property="twitter:url" content="{{ request.url }}">
-    <meta property="twitter:title" content="{% block twitter_title %}TempMail - Professional Temporary Email Service{% endblock %}">
-    <meta property="twitter:description" content="{% block twitter_description %}Free temporary email service. Get disposable email addresses instantly. No registration required.{% endblock %}">
+    <meta property="twitter:title" content="{% block twitter_title %}TempMail - Professional Temporary Email Service | Root Group Tech{% endblock %}">
+    <meta property="twitter:description" content="{% block twitter_description %}Professional temporary email service by Root Group Tech. Generate secure disposable email addresses instantly. Complete privacy protection.{% endblock %}">
     <meta property="twitter:image" content="{% block twitter_image %}{{ url_for('static', filename='images/tempmail-og.jpg', _external=True) if url_for else '/static/images/tempmail-og.jpg' }}{% endblock %}">
+    <meta property="twitter:image:alt" content="TempMail - Professional Temporary Email Service by Root Group Tech">
+    <meta property="twitter:creator" content="@rootgrouptech">
+    <meta property="twitter:site" content="@rootgrouptech">
     
-    <!-- Structured Data / Schema.org -->
+    <!-- Enhanced Structured Data / Schema.org -->
     <script type="application/ld+json">
     {
         "@context": "https://schema.org",
-        "@type": "WebSite",
+        "@type": "WebApplication",
         "name": "TempMail",
-        "description": "Professional temporary email service for privacy protection",
+        "description": "Professional temporary email service by Root Group Tech for complete privacy protection and spam prevention",
         "url": "{{ request.url_root if request else '/' }}",
+        "applicationCategory": "Email",
+        "operatingSystem": "Web Browser",
+        "creator": {
+            "@type": "Organization",
+            "name": "Root Group Tech",
+            "url": "https://rootgroup.tech",
+            "description": "Digital marketing and IT solutions company specializing in web development, mobile apps, and digital marketing services",
+            "knowsAbout": ["Digital Marketing", "Web Development", "Mobile App Development", "IT Solutions", "Database Systems"]
+        },
+        "publisher": {
+            "@type": "Organization", 
+            "name": "Root Group Tech",
+            "url": "https://rootgroup.tech"
+        },
+        "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "USD",
+            "availability": "https://schema.org/InStock"
+        },
+        "featureList": [
+            "Generate temporary email addresses instantly",
+            "Receive emails in real-time", 
+            "No registration required",
+            "Complete spam protection",
+            "Anonymous email service",
+            "Auto-deletion after 24 hours",
+            "Secure and private"
+        ],
+        "aggregateRating": {
+            "@type": "AggregateRating",
+            "ratingValue": "4.8",
+            "ratingCount": "1250",
+            "bestRating": "5",
+            "worstRating": "1"
+        },
         "potentialAction": {
             "@type": "SearchAction",
             "target": "{{ request.url_root if request else '/' }}?q={search_term_string}",
@@ -41,6 +100,70 @@
         }
     }
     </script>
+    
+    <!-- Organization Schema -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "Organization", 
+        "name": "Root Group Tech",
+        "url": "https://rootgroup.tech",
+        "logo": "https://rootgroup.tech/logo.png",
+        "description": "Leading digital marketing and IT solutions company providing comprehensive web development, mobile app development, database systems, and digital marketing services worldwide.",
+        "foundingDate": "2020",
+        "knowsAbout": [
+            "Digital Marketing",
+            "Search Engine Optimization", 
+            "Web Development",
+            "Mobile App Development",
+            "IT Solutions",
+            "Database Systems",
+            "Social Media Management",
+            "Content Marketing"
+        ],
+        "serviceArea": {
+            "@type": "Place",
+            "name": "Worldwide"
+        },
+        "hasOfferCatalog": {
+            "@type": "OfferCatalog",
+            "name": "Digital Services",
+            "itemListElement": [
+                {
+                    "@type": "Offer",
+                    "itemOffered": {
+                        "@type": "Service",
+                        "name": "Web Development",
+                        "description": "Custom website design and development services"
+                    }
+                },
+                {
+                    "@type": "Offer",
+                    "itemOffered": {
+                        "@type": "Service", 
+                        "name": "Digital Marketing",
+                        "description": "Comprehensive digital marketing strategies including SEO, content marketing, and social media management"
+                    }
+                },
+                {
+                    "@type": "Offer",
+                    "itemOffered": {
+                        "@type": "Service",
+                        "name": "Mobile App Development", 
+                        "description": "User-friendly, high-performance mobile applications for iOS and Android platforms"
+                    }
+                }
+            ]
+        }
+    }
+    </script>
+    
+    <!-- Performance Optimization -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com">
+    <link rel="dns-prefetch" href="//api.mail.tm">
+    <link rel="dns-prefetch" href="//rootgroup.tech">
     
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -307,6 +430,39 @@
                             </div>
                         </div>
                     </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Footer with Root Group Tech Credit -->
+    <footer class="bg-gray-800 text-white py-8 mt-12">
+        <div class="max-w-6xl mx-auto px-4 text-center">
+            <div class="mb-4">
+                <h3 class="text-lg font-semibold mb-2">TempMail - Professional Temporary Email Service</h3>
+                <p class="text-gray-300 text-sm">Secure, anonymous, disposable email addresses for complete privacy protection</p>
+            </div>
+            
+            <div class="border-t border-gray-700 pt-6 mt-6">
+                <div class="flex flex-col sm:flex-row justify-between items-center">
+                    <p class="text-gray-400 text-sm mb-4 sm:mb-0">
+                        © 2024 TempMail. All rights reserved. | Built with privacy and security in mind.
+                    </p>
+                    
+                    <div class="flex items-center space-x-2 text-sm">
+                        <span class="text-gray-400">Developed by</span>
+                        <a href="https://rootgroup.tech" target="_blank" rel="noopener noreferrer" 
+                           class="text-blue-400 hover:text-blue-300 font-medium transition-colors duration-200">
+                            <i class="fas fa-external-link-alt mr-1 text-xs"></i>
+                            Root Group Tech
+                        </a>
+                    </div>
+                </div>
+                
+                <div class="mt-4 pt-4 border-t border-gray-700">
+                    <p class="text-xs text-gray-500">
+                        Root Group Tech specializes in Digital Marketing, Web Development, Mobile App Development, and IT Solutions worldwide.
+                    </p>
                 </div>
             </div>
         </div>

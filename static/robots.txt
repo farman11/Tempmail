@@ -1,0 +1,22 @@
+User-agent: *
+Allow: /
+Allow: /static/
+Allow: /generate-email
+Allow: /privacy
+Allow: /terms
+
+# Disallow private inbox URLs for privacy
+Disallow: /email-inbox/
+Disallow: /sms-inbox/
+Disallow: /delete-email/
+Disallow: /admin/
+
+# Crawl-delay for respectful crawling
+Crawl-delay: 1
+
+# Sitemap location
+Sitemap: https://tempmail.replit.app/static/sitemap.xml
+
+# Root Group Tech - Developer Credit
+# Website developed by Root Group Tech (https://rootgroup.tech)
+# Specializing in Digital Marketing, Web Development, Mobile Apps, and IT Solutions

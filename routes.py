@@ -1,5 +1,5 @@
 import uuid
-from flask import render_template, request, session, redirect, url_for, flash, jsonify
+from flask import render_template, request, session, redirect, url_for, flash, jsonify, send_from_directory, make_response
 from app import app, db, limiter
 from models import TempEmail, EmailMessage
 from utils import is_spam_email
@@ -376,6 +376,27 @@ def email_webhook():
     except Exception as e:
         logging.error(f"Email webhook error: {e}")
         return jsonify({'status': 'error'}), 500
+
+# SEO and Performance Routes
+@app.route('/robots.txt')
+def robots_txt():
+    """Serve robots.txt file for search engine crawlers"""
+    return send_from_directory('static', 'robots.txt', mimetype='text/plain')
+
+@app.route('/sitemap.xml')
+def sitemap_xml():
+    """Serve sitemap.xml file for search engines"""
+    return send_from_directory('static', 'sitemap.xml', mimetype='application/xml')
+
+@app.route('/privacy')
+def privacy_policy():
+    """Privacy policy page for SEO and user trust"""
+    return render_template('privacy.html')
+
+@app.route('/terms')
+def terms_of_service():
+    """Terms of service page for SEO and legal compliance"""
+    return render_template('terms.html')
 
 
 
