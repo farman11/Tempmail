@@ -140,17 +140,43 @@
                         
                         <!-- Gmail-style Email Body -->
                         <div class="p-6">
+                            {% set email_content = '' %}
                             {% if message.html_content and message.html_content|string and message.html_content|string|trim %}
-                                <div class="gmail-email-content">
-                                    {{ message.html_content|safe }}
-                                </div>
+                                {% set email_content = message.html_content|string %}
                             {% elif message.text_content and message.text_content|string and message.text_content|string|trim %}
-                                <div class="gmail-email-content text-content">
-                                    {{ message.text_content|replace('\n', '<br>')|safe }}
-                                </div>
+                                {% set email_content = message.text_content|string %}
                             {% elif message.body and message.body|string and message.body|string|trim %}
-                                <div class="gmail-email-content text-content">
-                                    {{ message.body|replace('\n', '<br>')|safe }}
+                                {% set email_content = message.body|string %}
+                            {% endif %}
+                            
+                            {% if email_content %}
+                                <div class="gmail-email-content" id="email-body-{{ loop.index }}">
+                                    {% set clean_content = email_content.replace('["', '').replace('"]', '').replace('\\r\\n', '\n').replace('\r\n', '\n') %}
+                                    {% set paragraphs = clean_content.split('\n\n') %}
+                                    
+                                    {% for paragraph in paragraphs %}
+                                        {% if paragraph.strip() %}
+                                            {% if paragraph.strip().startswith('http') %}
+                                                <div class="my-4">
+                                                    <a href="{{ paragraph.strip() }}" target="_blank" rel="noopener noreferrer" class="gmail-action-button">
+                                                        {% if 'verify' in paragraph.lower() %}
+                                                            Verify Email Address
+                                                        {% elif 'confirm' in paragraph.lower() %}
+                                                            Confirm Account
+                                                        {% elif 'activate' in paragraph.lower() %}
+                                                            Activate Account  
+                                                        {% elif 'reset' in paragraph.lower() %}
+                                                            Reset Password
+                                                        {% else %}
+                                                            Visit Link
+                                                        {% endif %}
+                                                    </a>
+                                                </div>
+                                            {% else %}
+                                                <p class="mb-3">{{ paragraph.strip()|replace('\n', '<br>')|safe }}</p>
+                                            {% endif %}
+                                        {% endif %}
+                                    {% endfor %}
                                 </div>
                             {% else %}
                                 <div class="text-gray-500 italic text-center py-8">
@@ -613,22 +639,26 @@ originalToggle.forEach(button => {
 }
 
 /* Professional buttons from links */
-.gmail-email-content .action-button {
-    background: linear-gradient(135deg, #34d399 0%, #10b981 100%);
-    color: white;
+.gmail-email-content .gmail-action-button {
+    background: linear-gradient(135deg, #1a73e8 0%, #4285f4 100%);
+    color: white !important;
     padding: 12px 24px;
     border-radius: 8px;
     text-decoration: none;
     font-weight: 600;
     display: inline-block;
-    margin: 16px 8px;
-    box-shadow: 0 4px 12px rgba(52, 211, 153, 0.3);
+    margin: 16px 0;
+    box-shadow: 0 4px 12px rgba(26, 115, 232, 0.3);
     transition: all 0.3s ease;
+    font-size: 14px;
+    border: none;
+    cursor: pointer;
 }
 
-.gmail-email-content .action-button:hover {
+.gmail-email-content .gmail-action-button:hover {
     transform: translateY(-2px);
-    box-shadow: 0 6px 16px rgba(52, 211, 153, 0.4);
+    box-shadow: 0 6px 16px rgba(26, 115, 232, 0.4);
+    background: linear-gradient(135deg, #1557b0 0%, #3367d6 100%);
 }
 </style>
 
