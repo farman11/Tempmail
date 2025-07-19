@@ -55,16 +55,26 @@ def index():
             temp_emails[temp_email.id] = temp_email
             active_emails = [temp_email]
             logging.info(f"Auto-created email: {temp_email.email_address}")
-            # Redirect to the inbox page immediately when email is auto-created
-            return redirect(url_for('email_inbox', email_id=temp_email.id))
         else:
             logging.error("Failed to auto-create email")
     
-    # Fetch messages for active emails
+    # Fetch messages for active emails and attach them
     for email in active_emails:
         if hasattr(email, 'mail_tm_id') and email.mail_tm_id:
             # Refresh messages from mail.tm service
             mail_tm_service.fetch_emails_for_account(email, None, EmailMessage)
+        
+        # Get messages for this email from email_messages dictionary
+        messages = []
+        for msg_id, msg in email_messages.items():
+            if msg.temp_email_id == email.id:
+                messages.append(msg)
+        
+        # Sort messages by received date (newest first)
+        messages.sort(key=lambda x: x.received_at, reverse=True)
+        
+        # Attach messages to the email object
+        email.messages = messages
     
     return render_template('index.html', 
                          active_emails=active_emails)

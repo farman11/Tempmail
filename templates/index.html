@@ -204,34 +204,34 @@
 <script>
 // Real-time email refresh functionality
 function refreshEmails() {
-    const refreshIcons = document.querySelectorAll('.refresh-icon, .refresh-icon-header');
+    const refreshIcons = document.querySelectorAll('.fa-sync-alt, .refresh-icon-infinite');
     
     // Add spinning animation to all refresh icons
     refreshIcons.forEach(icon => {
         icon.classList.add('refresh-spinning');
     });
     
-    // Call the fetch-emails endpoint
-    fetch('/fetch-emails', {
-        method: 'POST',
+    // Get email ID from active email if available
+    {% if active_emails and active_emails|length > 0 %}
+    const emailId = '{{ active_emails[0].id }}';
+    
+    // Call the fetch-emails endpoint with email ID
+    fetch('/fetch-emails/' + emailId, {
+        method: 'GET',
         headers: {
             'Content-Type': 'application/json',
         }
     })
     .then(response => response.json())
     .then(data => {
+        console.log('Current messages:', data.count, 'New count:', data.count);
         if (data.status === 'success') {
-            if (data.new_messages > 0) {
-                // Silently reload page to display new emails
-                location.reload();
-            }
-            // No alerts - just silent refresh
+            // Always reload to show updated message count/content
+            location.reload();
         }
-        // No error alerts - just silent operation
     })
     .catch(error => {
         console.error('Error:', error);
-        // No error alerts - just log to console
     })
     .finally(() => {
         // Remove spinning animation
@@ -239,13 +239,25 @@ function refreshEmails() {
             icon.classList.remove('refresh-spinning');
         });
     });
+    {% else %}
+    // No email available, just remove animation
+    setTimeout(() => {
+        refreshIcons.forEach(icon => {
+            icon.classList.remove('refresh-spinning');
+        });
+    }, 1000);
+    {% endif %}
 }
 
 // Automatic refresh functionality
 function startAutoRefresh() {
-    // Auto-refresh every 30 seconds
+    {% if active_emails and active_emails|length > 0 %}
+    const emailId = '{{ active_emails[0].id }}';
+    console.log('Setting up auto-refresh for email ID:', emailId);
+    
+    // Auto-refresh every 15 seconds
     setInterval(() => {
-        const refreshIcons = document.querySelectorAll('.refresh-icon, .refresh-icon-header');
+        const refreshIcons = document.querySelectorAll('.fa-sync-alt, .refresh-icon-infinite');
         
         // Add subtle auto-refresh animation
         refreshIcons.forEach(icon => {
@@ -253,15 +265,16 @@ function startAutoRefresh() {
         });
         
         // Perform silent refresh
-        fetch('/fetch-emails', {
-            method: 'POST',
+        fetch('/fetch-emails/' + emailId, {
+            method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
             }
         })
         .then(response => response.json())
         .then(data => {
-            if (data.status === 'success' && data.new_messages > 0) {
+            console.log('Current messages:', data.count, 'New count:', data.count);
+            if (data.status === 'success' && data.count > 0) {
                 // Silently reload page to display new emails
                 location.reload();
             }
@@ -277,7 +290,8 @@ function startAutoRefresh() {
                 });
             }, 2000);
         });
-    }, 30000); // 30 seconds
+    }, 15000); // 15 seconds for more frequent checking
+    {% endif %}
 }
 
 // Change email function
