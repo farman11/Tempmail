@@ -135,10 +135,6 @@
                 <button class="bg-blue-600 hover:bg-blue-700 text-white p-4 rounded-full refresh-btn refresh-btn-enhanced refresh-pulse" onclick="fetchNewEmails()" title="Refresh Messages">
                     <i class="fas fa-sync-alt text-xl"></i>
                 </button>
-                <a href="{{ url_for('add_test_email', email_id=temp_email.id) }}" 
-                   class="bg-gray-600 hover:bg-gray-700 text-white px-6 py-3 rounded btn-transition">
-                    <i class="fas fa-plus mr-2"></i> Add Test Emails
-                </a>
             </div>
         </div>
     {% endif %}
@@ -158,11 +154,11 @@
 
 {% block scripts %}
 <script>
-// Set email ID for auto-refresh
-const emailId = '{{ temp_email.id }}';
+// Get current email ID from URL path
+const emailId = window.location.pathname.split('/').pop();
 
 // Auto-refresh functionality - only run on email inbox pages
-if (typeof emailId !== 'undefined' && emailId) {
+if (emailId && emailId !== '' && emailId !== 'inbox') {
     console.log('Setting up auto-refresh for email ID:', emailId);
     
     setInterval(function() {
@@ -174,15 +170,15 @@ if (typeof emailId !== 'undefined' && emailId) {
         fetch('/fetch-emails/' + emailId)
         .then(response => {
             if (!response.ok) {
-                throw new Error('HTTP ' + response.status + ': ' + response.statusText);
+                console.warn('Auto-refresh failed: HTTP ' + response.status);
+                return;
             }
             return response.json();
         })
         .then(data => {
-            console.log('Auto-refresh response:', data);
-            if (data.status === 'success') {
+            if (data && data.status === 'success') {
                 // Count current email messages displayed
-                const currentMessageElements = document.querySelectorAll('.email-item, .message-item, .bg-white.rounded-lg.shadow-md');
+                const currentMessageElements = document.querySelectorAll('.email-item, .message-item, .gmail-style');
                 const currentMessageCount = currentMessageElements.length;
                 const newMessageCount = data.count || 0;
                 
