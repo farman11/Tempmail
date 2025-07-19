@@ -289,7 +289,7 @@
 
 {% block scripts %}
 <script>
-// Real-time email refresh functionality
+// Enhanced real-time email refresh with security and error handling
 function refreshEmails() {
     const refreshIcons = document.querySelectorAll('.fa-sync-alt, .refresh-icon-infinite');
     
@@ -302,29 +302,65 @@ function refreshEmails() {
     {% if active_emails and active_emails|length > 0 %}
     const emailId = '{{ active_emails[0].id }}';
     
-    // Call the fetch-emails endpoint with email ID
-    fetch('/fetch-emails/' + emailId, {
+    // Enhanced security: Validate email ID format
+    if (!emailId || emailId.length > 100) {
+        console.error('Invalid email ID');
+        return;
+    }
+    
+    // Call the fetch-emails endpoint with enhanced error handling
+    fetch('/fetch-emails/' + encodeURIComponent(emailId), {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',
-        }
+            'Cache-Control': 'no-cache, no-store, must-revalidate',
+            'Pragma': 'no-cache'
+        },
+        credentials: 'same-origin'  // Include session cookies for security
     })
-    .then(response => response.json())
+    .then(response => {
+        if (!response.ok) {
+            if (response.status === 401 || response.status === 403) {
+                // Session expired or unauthorized
+                location.reload();
+                return;
+            }
+            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        }
+        return response.json();
+    })
     .then(data => {
-        console.log('Current messages:', data.count, 'New count:', data.count);
         if (data.status === 'success') {
-            // Always reload to show updated message count/content
-            location.reload();
+            console.log('Current messages:', data.count, 'New count:', data.new_count || 0);
+            
+            // Only reload if there are new messages or status changed
+            if (data.new_count > 0 || window.lastMessageCount !== data.count) {
+                window.lastMessageCount = data.count;
+                location.reload();
+            }
+        } else if (data.status === 'error') {
+            console.warn('Server error:', data.message);
+            if (data.redirect) {
+                window.location.href = data.redirect;
+            }
         }
     })
     .catch(error => {
-        console.error('Error:', error);
+        console.error('Auto-refresh error:', error);
+        // Fallback: Reload page on persistent errors
+        if (window.refreshErrorCount && window.refreshErrorCount > 3) {
+            location.reload();
+        } else {
+            window.refreshErrorCount = (window.refreshErrorCount || 0) + 1;
+        }
     })
     .finally(() => {
-        // Remove spinning animation
-        refreshIcons.forEach(icon => {
-            icon.classList.remove('refresh-spinning');
-        });
+        // Remove spinning animation after delay for UX
+        setTimeout(() => {
+            refreshIcons.forEach(icon => {
+                icon.classList.remove('refresh-spinning');
+            });
+        }, 500);
     });
     {% else %}
     // No email available, just remove animation
@@ -336,53 +372,101 @@ function refreshEmails() {
     {% endif %}
 }
 
-// Automatic refresh functionality
+// Enhanced automatic refresh with intelligent intervals
 function startAutoRefresh() {
     {% if active_emails and active_emails|length > 0 %}
     const emailId = '{{ active_emails[0].id }}';
     console.log('Setting up auto-refresh for email ID:', emailId);
     
-    // Auto-refresh every 15 seconds
-    setInterval(() => {
-        const refreshIcons = document.querySelectorAll('.fa-sync-alt, .refresh-icon-infinite');
+    // Initialize tracking variables
+    window.lastMessageCount = 0;
+    window.refreshErrorCount = 0;
+    window.autoRefreshInterval = null;
+    
+    // Smart refresh intervals: More frequent when active, less when idle
+    let refreshInterval = 10000; // Start with 10 seconds
+    let maxInterval = 60000; // Max 60 seconds
+    let consecutiveEmptyChecks = 0;
+    
+    function performAutoRefresh() {
+        // Enhanced security validation
+        if (!emailId || emailId.length > 100) {
+            return;
+        }
         
-        // Add subtle auto-refresh animation
-        refreshIcons.forEach(icon => {
-            icon.classList.add('auto-refresh-spinning');
-        });
-        
-        // Perform silent refresh - if email not found, reload page to get new email
-        fetch('/fetch-emails/' + emailId, {
+        fetch('/fetch-emails/' + encodeURIComponent(emailId), {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
-            }
+                'Cache-Control': 'no-cache, no-store, must-revalidate',
+                'Pragma': 'no-cache'
+            },
+            credentials: 'same-origin'
         })
-        .then(response => response.json())
+        .then(response => {
+            if (!response.ok) {
+                if (response.status === 401 || response.status === 403) {
+                    location.reload();
+                    return null;
+                }
+                throw new Error(`HTTP ${response.status}`);
+            }
+            return response.json();
+        })
         .then(data => {
-            console.log('Current messages:', data.count, 'New count:', data.count);
-            if (data.status === 'success' && data.count > 0) {
-                // Silently reload page to display new emails
-                location.reload();
-            } else if (data.status === 'error' && data.message === 'Email not found') {
-                // Email expired, reload to get new one
-                location.reload();
+            if (!data) return;
+            
+            if (data.status === 'success') {
+                const newCount = data.new_count || 0;
+                console.log('Current messages:', data.count, 'New count:', newCount);
+                
+                // Smart refresh logic: Only reload if there are changes
+                if (newCount > 0 || (window.lastMessageCount !== undefined && window.lastMessageCount !== data.count)) {
+                    window.lastMessageCount = data.count;
+                    location.reload();
+                } else {
+                    // Adjust refresh interval based on activity
+                    consecutiveEmptyChecks++;
+                    if (consecutiveEmptyChecks > 5) {
+                        refreshInterval = Math.min(refreshInterval * 1.5, maxInterval);
+                    }
+                }
+                
+                window.refreshErrorCount = 0; // Reset error count on success
+            } else if (data.status === 'error') {
+                if (data.redirect) {
+                    window.location.href = data.redirect;
+                }
             }
         })
         .catch(error => {
             console.error('Auto-refresh error:', error);
-            // On error, reload page to reset state
-            location.reload();
-        })
-        .finally(() => {
-            // Remove auto-refresh animation
-            setTimeout(() => {
-                refreshIcons.forEach(icon => {
-                    icon.classList.remove('auto-refresh-spinning');
-                });
-            }, 2000);
+            window.refreshErrorCount = (window.refreshErrorCount || 0) + 1;
+            
+            // Progressive backoff on errors
+            if (window.refreshErrorCount > 3) {
+                refreshInterval = Math.min(refreshInterval * 2, maxInterval);
+            }
+            
+            // Reload on persistent errors
+            if (window.refreshErrorCount > 10) {
+                location.reload();
+            }
         });
-    }, 15000); // 15 seconds for more frequent checking
+    }
+    
+    // Start intelligent auto-refresh
+    performAutoRefresh(); // Initial check
+    window.autoRefreshInterval = setInterval(performAutoRefresh, refreshInterval);
+    
+    // Adjust interval dynamically
+    setInterval(() => {
+        if (window.autoRefreshInterval) {
+            clearInterval(window.autoRefreshInterval);
+            window.autoRefreshInterval = setInterval(performAutoRefresh, refreshInterval);
+        }
+    }, 30000); // Adjust every 30 seconds
+    
     {% endif %}
 }
 

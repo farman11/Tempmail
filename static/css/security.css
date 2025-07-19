@@ -1,0 +1,150 @@
+/* Enhanced Security and Performance Styles */
+
+/* Content Security Policy Compliant Styles */
+.security-notice {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 1rem;
+    border-radius: 0.5rem;
+    margin: 1rem 0;
+}
+
+/* Enhanced Button Security */
+.secure-button {
+    background: #2563eb;
+    color: white;
+    border: 2px solid transparent;
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.5rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.secure-button:hover {
+    background: #1d4ed8;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+}
+
+.secure-button:active {
+    transform: translateY(0);
+}
+
+/* Real-time Status Indicators */
+.status-online {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    background: #10b981;
+    border-radius: 50%;
+    animation: pulse-green 2s infinite;
+}
+
+.status-loading {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    background: #f59e0b;
+    border-radius: 50%;
+    animation: pulse-yellow 2s infinite;
+}
+
+@keyframes pulse-green {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+}
+
+@keyframes pulse-yellow {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+}
+
+/* Enhanced Refresh Animations */
+.refresh-spinning {
+    animation: spin 1s linear infinite;
+}
+
+.auto-refresh-spinning {
+    animation: spin 2s linear infinite;
+    opacity: 0.7;
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+/* Improved Email Content Security */
+.email-content {
+    max-width: 100%;
+    overflow-wrap: break-word;
+    word-break: break-word;
+}
+
+.email-content iframe,
+.email-content object,
+.email-content embed {
+    display: none !important; /* Security: Block embedded content */
+}
+
+.email-content script {
+    display: none !important; /* Security: Block scripts */
+}
+
+/* Enhanced Mobile Security */
+@media (max-width: 768px) {
+    .secure-button {
+        padding: 1rem;
+        width: 100%;
+        text-align: center;
+    }
+    
+    .security-notice {
+        margin: 0.5rem 0;
+        padding: 0.75rem;
+        font-size: 0.875rem;
+    }
+}
+
+/* Loading States */
+.loading-shimmer {
+    background: linear-gradient(90deg, #f3f4f6 25%, #e5e7eb 50%, #f3f4f6 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+}
+
+@keyframes shimmer {
+    0% { background-position: -200% 0; }
+    100% { background-position: 200% 0; }
+}
+
+/* Enhanced Error States */
+.error-message {
+    background: #fef2f2;
+    border: 1px solid #fecaca;
+    color: #dc2626;
+    padding: 1rem;
+    border-radius: 0.5rem;
+    margin: 1rem 0;
+}
+
+.success-message {
+    background: #f0fdf4;
+    border: 1px solid #bbf7d0;
+    color: #16a34a;
+    padding: 1rem;
+    border-radius: 0.5rem;
+    margin: 1rem 0;
+}
+
+/* Privacy Protection Indicators */
+.privacy-shield::before {
+    content: "🔒";
+    margin-right: 0.5rem;
+}
+
+.secure-connection::before {
+    content: "🛡️";
+    margin-right: 0.5rem;
+}

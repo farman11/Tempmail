@@ -1,0 +1,20 @@
+User-agent: *
+Allow: /
+
+# Allow important pages
+Allow: /privacy
+Allow: /terms
+Allow: /about
+Allow: /static/
+
+# Disallow private areas
+Disallow: /email-inbox/
+Disallow: /fetch-emails/
+Disallow: /admin/
+Disallow: /api/
+
+# Sitemap
+Sitemap: https://tempmail.replit.app/sitemap.xml
+
+# Crawl delay
+Crawl-delay: 1
