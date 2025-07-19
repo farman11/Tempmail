@@ -6,13 +6,16 @@ TempMail is a Flask-based web application that provides users with temporary, di
 
 ## Recent Changes
 
-✓ **2025-07-19**: Enhanced Gmail-Style Professional Email Formatting
+✓ **2025-07-19**: Enhanced Gmail-Style Professional Email Formatting with Smart Link Detection
 - Added comprehensive Gmail-inspired email content styling with professional typography
 - Implemented clean email header layout with sender info and date formatting 
 - Added professional button styling for email links with hover effects and shadows
 - Enhanced verification code highlighting with gradient backgrounds
 - Improved email content readability with proper spacing and color schemes
-- Links now display as professional blue buttons with white text
+- Smart link detection automatically converts URLs to short, labeled buttons ("Verify Email", "Confirm", etc.)
+- Removed all JSON formatting artifacts (brackets, quotes, escape characters) from email display
+- Professional paragraph spacing and typography for all email messages
+- Short, centered link buttons with consistent blue gradient styling
 - Added responsive design elements for consistent appearance across devices
 
 ✓ **2025-07-19**: Removed Delete Functionality & Fixed Auto-refresh Issues

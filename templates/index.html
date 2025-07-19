@@ -150,30 +150,36 @@
                             {% endif %}
                             
                             {% if email_content %}
-                                <div class="gmail-email-content" id="email-body-{{ loop.index }}">
-                                    {% set clean_content = email_content.replace('["', '').replace('"]', '').replace('\\r\\n', '\n').replace('\r\n', '\n') %}
-                                    {% set paragraphs = clean_content.split('\n\n') %}
+                                <div class="gmail-email-content professional-email-message" id="email-body-{{ loop.index }}">
+                                    {% set clean_content = email_content.replace('["', '').replace('"]', '').replace('\\r\\n', '\n').replace('\r\n', '\n').replace('\\n', '\n') %}
+                                    {% set lines = clean_content.split('\n') %}
                                     
-                                    {% for paragraph in paragraphs %}
-                                        {% if paragraph.strip() %}
-                                            {% if paragraph.strip().startswith('http') %}
-                                                <div class="my-4">
-                                                    <a href="{{ paragraph.strip() }}" target="_blank" rel="noopener noreferrer" class="gmail-action-button">
-                                                        {% if 'verify' in paragraph.lower() %}
-                                                            Verify Email Address
-                                                        {% elif 'confirm' in paragraph.lower() %}
-                                                            Confirm Account
-                                                        {% elif 'activate' in paragraph.lower() %}
-                                                            Activate Account  
-                                                        {% elif 'reset' in paragraph.lower() %}
+                                    {% for line in lines %}
+                                        {% if line.strip() %}
+                                            {% if line.strip().startswith('http') %}
+                                                <div class="email-link-section">
+                                                    <a href="{{ line.strip() }}" target="_blank" rel="noopener noreferrer" class="email-link-button">
+                                                        {% if 'verify' in line.lower() %}
+                                                            Verify Email
+                                                        {% elif 'confirm' in line.lower() %}
+                                                            Confirm
+                                                        {% elif 'activate' in line.lower() %}
+                                                            Activate
+                                                        {% elif 'reset' in line.lower() %}
                                                             Reset Password
+                                                        {% elif 'download' in line.lower() %}
+                                                            Download
+                                                        {% elif 'login' in line.lower() %}
+                                                            Login
+                                                        {% elif 'signup' in line.lower() %}
+                                                            Sign Up
                                                         {% else %}
-                                                            Visit Link
+                                                            Open Link
                                                         {% endif %}
                                                     </a>
                                                 </div>
                                             {% else %}
-                                                <p class="mb-3">{{ paragraph.strip()|replace('\n', '<br>')|safe }}</p>
+                                                <p class="email-paragraph">{{ line.strip() }}</p>
                                             {% endif %}
                                         {% endif %}
                                     {% endfor %}
@@ -638,27 +644,61 @@ originalToggle.forEach(button => {
     box-shadow: 0 2px 8px rgba(26, 115, 232, 0.2);
 }
 
-/* Professional buttons from links */
-.gmail-email-content .gmail-action-button {
+/* Professional Email Message Styling */
+.professional-email-message {
+    background: #ffffff;
+    border-radius: 8px;
+    padding: 0;
+    margin: 0;
+}
+
+.professional-email-message .email-paragraph {
+    margin: 0 0 16px 0;
+    color: #3c4043;
+    font-size: 14px;
+    line-height: 1.6;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+}
+
+.professional-email-message .email-paragraph:last-child {
+    margin-bottom: 0;
+}
+
+.professional-email-message .email-link-section {
+    margin: 20px 0;
+    text-align: center;
+}
+
+/* Short Professional Link Buttons */
+.professional-email-message .email-link-button {
     background: linear-gradient(135deg, #1a73e8 0%, #4285f4 100%);
     color: white !important;
-    padding: 12px 24px;
-    border-radius: 8px;
+    padding: 10px 20px;
+    border-radius: 6px;
     text-decoration: none;
     font-weight: 600;
     display: inline-block;
-    margin: 16px 0;
-    box-shadow: 0 4px 12px rgba(26, 115, 232, 0.3);
-    transition: all 0.3s ease;
     font-size: 14px;
     border: none;
     cursor: pointer;
+    box-shadow: 0 2px 8px rgba(26, 115, 232, 0.2);
+    transition: all 0.2s ease;
+    min-width: 120px;
 }
 
-.gmail-email-content .gmail-action-button:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 16px rgba(26, 115, 232, 0.4);
+.professional-email-message .email-link-button:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(26, 115, 232, 0.3);
     background: linear-gradient(135deg, #1557b0 0%, #3367d6 100%);
+}
+
+/* Email content spacing and typography */
+.professional-email-message p:first-child {
+    margin-top: 0;
+}
+
+.professional-email-message p:empty {
+    display: none;
 }
 </style>
 
