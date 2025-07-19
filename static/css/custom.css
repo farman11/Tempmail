@@ -683,6 +683,59 @@ body.professional-layout {
     letter-spacing: 2px;
 }
 
+/* Email link button styles */
+.email-link-section {
+    margin: 16px 0;
+    text-align: center;
+}
+
+.email-link-button {
+    display: inline-block;
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-hover) 100%);
+    color: white !important;
+    padding: 12px 24px;
+    border-radius: 8px;
+    text-decoration: none !important;
+    font-weight: 600;
+    font-size: 0.875rem;
+    transition: all 0.3s ease;
+    box-shadow: var(--shadow-sm);
+    border: none;
+    cursor: pointer;
+}
+
+.email-link-button:hover {
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-md);
+    color: white !important;
+    text-decoration: none !important;
+}
+
+.email-link-button:visited {
+    color: white !important;
+}
+
+/* Email paragraph styles */
+.email-paragraph {
+    margin-bottom: 12px;
+    line-height: 1.6;
+    color: var(--text-primary);
+}
+
+/* Gmail email content container */
+.gmail-email-content {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    line-height: 1.6;
+    color: var(--text-primary);
+    word-wrap: break-word;
+}
+
+.gmail-email-content .email-heading {
+    color: var(--text-primary);
+    margin-top: 24px;
+    margin-bottom: 12px;
+}
+
 /* Ad overlay styles */
 .ad-overlay {
     position: fixed;

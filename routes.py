@@ -3,6 +3,7 @@ from flask import render_template, request, session, redirect, url_for, flash, j
 from app import app, limiter, temp_emails, email_messages, save_emails_to_cache
 from models import TempEmail, EmailMessage
 from utils import is_spam_email
+from email_utils import process_email_content
 from datetime import datetime
 import logging
 import re

@@ -97,5 +97,19 @@ limiter.init_app(app)
 # Load emails from cache on startup
 load_emails_from_cache()
 
+# Add template filters for email processing
+from email_utils import process_email_content
+from markupsafe import Markup
+
+@app.template_filter('process_email')
+def process_email_filter(html_content, text_content='', body_content=''):
+    """Template filter to process email content properly"""
+    try:
+        processed = process_email_content(html_content, text_content, body_content)
+        return Markup(processed)  # Mark as safe HTML
+    except Exception as e:
+        logging.error(f"Error processing email content: {e}")
+        return Markup('<div class="text-gray-500 italic">Error processing email content</div>')
+
 # Import routes
 import routes
