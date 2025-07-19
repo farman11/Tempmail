@@ -6,7 +6,7 @@ TempMail is a Flask-based web application that provides users with temporary, di
 
 ## Recent Changes
 
-✓ **2025-07-19**: Enhanced Email Display & Link Processing
+✓ **2025-07-19**: Enhanced Email Display & Interactive Refresh System
 - Fixed database connection issues by creating PostgreSQL database
 - Removed JSON formatting characters ({}, "", []) from email content display
 - Added dynamic link-to-button conversion with intelligent button naming
@@ -14,6 +14,10 @@ TempMail is a Flask-based web application that provides users with temporary, di
 - Fixed JavaScript errors related to DOM manipulation
 - Improved email content processing with better formatting
 - Added professional CSS styling for email buttons and verification codes
+- Replaced text-based "Check for New Emails" with animated refresh icons
+- Implemented enhanced motion effects: hover animations, pulse effects, and smooth spinning
+- Added automatic refresh every 30 seconds with subtle animations
+- Removed all alerts for completely silent operation
 
 ✓ **2025-07-18**: Migrated from Bootstrap to Tailwind CSS framework
 ✓ **2025-07-18**: Implemented Gmail-style email formatting and display
