@@ -3,10 +3,28 @@
 {% block content %}
 <!-- Dark Header Section with Email Display -->
 <div class="bg-gray-800 text-white py-8 md:py-16">
-    <div class="max-w-4xl mx-auto text-center px-4 sm:px-6">
-        <h1 class="text-2xl sm:text-3xl font-bold mb-6 md:mb-8">
-            Your Temporary Email Address
-        </h1>
+    <div class="max-w-7xl mx-auto px-4 sm:px-6">
+        <div class="flex items-center justify-between">
+            <!-- Left Square Ad -->
+            <div class="hidden lg:block w-48">
+                <div class="bg-gradient-to-br from-red-600 to-orange-600 rounded-lg p-3 text-white text-center aspect-square">
+                    <small class="block mb-1 opacity-75 text-xs">Ad</small>
+                    <div class="text-center">
+                        <i class="fas fa-ad text-lg mb-1"></i>
+                        <h3 class="text-xs font-bold mb-1">Adobe Creative</h3>
+                        <p class="text-xs opacity-90 mb-2">Design Pro Tools</p>
+                        <button class="bg-white text-red-600 px-2 py-1 rounded text-xs font-semibold">
+                            Try Now
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Center Content -->
+            <div class="flex-1 text-center px-4">
+                <h1 class="text-2xl sm:text-3xl font-bold mb-6 md:mb-8">
+                    Your Temporary Email Address
+                </h1>
         
         {% if active_emails and active_emails|length > 0 %}
         <!-- Display existing email -->
@@ -39,11 +57,28 @@
         </div>
         {% endif %}
         
-        <p class="text-gray-300 text-xs sm:text-sm max-w-2xl mx-auto px-2">
-            Forget about spam, advertising mailings, hacking and attacking robots. Keep your 
-            real mailbox clean and secure. Temp Mail provides temporary, secure, anonymous, 
-            free, disposable email address.
-        </p>
+                <p class="text-gray-300 text-xs sm:text-sm max-w-2xl mx-auto px-2">
+                    Forget about spam, advertising mailings, hacking and attacking robots. Keep your 
+                    real mailbox clean and secure. Temp Mail provides temporary, secure, anonymous, 
+                    free, disposable email address.
+                </p>
+            </div>
+            
+            <!-- Right Square Ad -->
+            <div class="hidden lg:block w-48">
+                <div class="bg-gradient-to-br from-indigo-600 to-purple-600 rounded-lg p-3 text-white text-center aspect-square">
+                    <small class="block mb-1 opacity-75 text-xs">Ad</small>
+                    <div class="text-center">
+                        <i class="fas fa-ad text-lg mb-1"></i>
+                        <h3 class="text-xs font-bold mb-1">Canva Pro</h3>
+                        <p class="text-xs opacity-90 mb-2">Easy Design</p>
+                        <button class="bg-white text-indigo-600 px-2 py-1 rounded text-xs font-semibold">
+                            Start Free
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 
