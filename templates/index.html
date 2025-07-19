@@ -264,7 +264,7 @@ function startAutoRefresh() {
             icon.classList.add('auto-refresh-spinning');
         });
         
-        // Perform silent refresh
+        // Perform silent refresh - if email not found, reload page to get new email
         fetch('/fetch-emails/' + emailId, {
             method: 'GET',
             headers: {
@@ -277,10 +277,15 @@ function startAutoRefresh() {
             if (data.status === 'success' && data.count > 0) {
                 // Silently reload page to display new emails
                 location.reload();
+            } else if (data.status === 'error' && data.message === 'Email not found') {
+                // Email expired, reload to get new one
+                location.reload();
             }
         })
         .catch(error => {
             console.error('Auto-refresh error:', error);
+            // On error, reload page to reset state
+            location.reload();
         })
         .finally(() => {
             // Remove auto-refresh animation

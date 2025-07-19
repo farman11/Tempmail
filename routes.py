@@ -1,6 +1,6 @@
 import uuid
 from flask import render_template, request, session, redirect, url_for, flash, jsonify, send_from_directory, make_response
-from app import app, limiter, temp_emails, email_messages
+from app import app, limiter, temp_emails, email_messages, save_emails_to_cache
 from models import TempEmail, EmailMessage
 from utils import is_spam_email
 from datetime import datetime
@@ -55,6 +55,8 @@ def index():
             temp_emails[temp_email.id] = temp_email
             active_emails = [temp_email]
             logging.info(f"Auto-created email: {temp_email.email_address}")
+            # Save to cache for persistence
+            save_emails_to_cache()
         else:
             logging.error("Failed to auto-create email")
     
@@ -110,12 +112,14 @@ def generate_email():
     
     if temp_email:
         temp_emails[temp_email.id] = temp_email
+        save_emails_to_cache()  # Save to cache
         flash(f'New temporary email created: {temp_email.email_address}', 'success')
         return redirect(url_for('index'))
     else:
         # Fallback to local email if mail.tm fails
         temp_email = TempEmail(session_id=session_id, use_real_email=False)
         temp_emails[temp_email.id] = temp_email
+        save_emails_to_cache()  # Save to cache
         flash(f'Temporary email created: {temp_email.email_address} (Demo mode)', 'warning')
         return redirect(url_for('index'))
 
