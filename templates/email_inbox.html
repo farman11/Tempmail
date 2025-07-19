@@ -41,7 +41,7 @@
                             <i class="fas fa-exclamation-triangle mr-1"></i> Show Spam
                         </a>
                     {% endif %}
-                    <button class="text-white p-3 rounded-full refresh-btn refresh-btn-enhanced" onclick="fetchNewEmails()" title="Refresh Messages">
+                    <button class="bg-blue-600 hover:bg-blue-700 text-white p-3 rounded-full refresh-btn refresh-btn-enhanced" onclick="fetchNewEmails()" title="Refresh Messages">
                         <i class="fas fa-sync-alt text-lg"></i>
                     </button>
                 </div>
@@ -132,7 +132,7 @@
                 {% endif %}
             </p>
             <div class="flex flex-col sm:flex-row gap-3 justify-center items-center">
-                <button class="text-white p-4 rounded-full refresh-btn refresh-btn-enhanced refresh-pulse" onclick="fetchNewEmails()" title="Refresh Messages">
+                <button class="bg-blue-600 hover:bg-blue-700 text-white p-4 rounded-full refresh-btn refresh-btn-enhanced refresh-pulse" onclick="fetchNewEmails()" title="Refresh Messages">
                     <i class="fas fa-sync-alt text-xl"></i>
                 </button>
                 <a href="{{ url_for('add_test_email', email_id=temp_email.id) }}" 
