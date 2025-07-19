@@ -52,9 +52,23 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
     <style>
+        /* Root Group Tech Color Palette */
+        :root {
+            --primary-bg: #3c5a7a;
+            --primary-bg-alt: #4a6b8a;
+            --text-primary: #ffffff;
+            --text-secondary: #e8f0f7;
+            --accent-orange: #ff9500;
+            --accent-yellow: #ffc107;
+            --card-bg: rgba(255, 255, 255, 0.08);
+            --card-border: rgba(255, 255, 255, 0.15);
+        }
+        
         body { 
             font-family: 'Inter', sans-serif; 
-            background-color: #f5f5f5;
+            background: linear-gradient(135deg, var(--primary-bg) 0%, var(--primary-bg-alt) 100%);
+            color: var(--text-primary);
+            min-height: 100vh;
         }
         .btn-transition { 
             transition: all 0.3s ease; 
@@ -63,7 +77,7 @@
             transform: translateY(-1px); 
         }
         .copy-btn:hover {
-            background-color: #16a34a !important;
+            background-color: var(--accent-orange) !important;
         }
         .email-body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
@@ -82,32 +96,33 @@
             display: inline-block;
             margin: 8px 8px 8px 0;
             padding: 10px 16px;
-            background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+            background: linear-gradient(135deg, var(--accent-orange) 0%, #e68600 100%);
             color: white !important;
             border-radius: 8px;
             font-weight: 500;
             transition: all 0.2s ease;
-            box-shadow: 0 2px 4px rgba(37, 99, 235, 0.2);
+            box-shadow: 0 2px 4px rgba(255, 149, 0, 0.3);
         }
         
         .email-body a.inline-block:hover {
             transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
-            background: linear-gradient(135deg, #1d4ed8 0%, #1e40af 100%);
+            box-shadow: 0 4px 12px rgba(255, 149, 0, 0.4);
+            background: linear-gradient(135deg, #e68600 0%, #cc7700 100%);
         }
         
         /* Verification code styling */
         .verification-code,
         .email-body span[style*="background"] {
-            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%) !important;
-            color: #92400e !important;
+            background: linear-gradient(135deg, var(--accent-yellow) 0%, #ffb700 100%) !important;
+            color: #1a1a1a !important;
             padding: 4px 12px !important;
             border-radius: 6px !important;
             font-weight: bold !important;
             font-family: 'SF Mono', 'Monaco', 'Inconsolata', monospace !important;
             font-size: 1.1em !important;
             letter-spacing: 0.5px !important;
-            border: 1px solid #f59e0b !important;
+            border: 2px solid var(--accent-orange) !important;
+            box-shadow: 0 2px 4px rgba(255, 149, 0, 0.2);
         }
         
         /* Clean email text formatting */
@@ -179,12 +194,14 @@
         
         .refresh-btn-enhanced {
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            box-shadow: 0 2px 4px rgba(37, 99, 235, 0.2);
+            box-shadow: 0 2px 4px rgba(255, 149, 0, 0.3);
+            background: linear-gradient(135deg, var(--accent-orange) 0%, #e68600 100%) !important;
         }
         
         .refresh-btn-enhanced:hover {
             transform: translateY(-2px) scale(1.05);
-            box-shadow: 0 8px 16px rgba(37, 99, 235, 0.4);
+            box-shadow: 0 8px 16px rgba(255, 149, 0, 0.5);
+            background: linear-gradient(135deg, #e68600 0%, #cc7700 100%) !important;
         }
         
         .refresh-btn-enhanced:active {
@@ -204,18 +221,45 @@
         @keyframes refreshPulse {
             0%, 100% { 
                 transform: scale(1);
-                box-shadow: 0 2px 4px rgba(37, 99, 235, 0.2);
+                box-shadow: 0 2px 4px rgba(255, 149, 0, 0.3);
             }
             50% { 
                 transform: scale(1.1);
-                box-shadow: 0 4px 8px rgba(37, 99, 235, 0.3);
+                box-shadow: 0 4px 8px rgba(255, 149, 0, 0.4);
             }
+        }
+        
+        /* Override Tailwind with custom theme */
+        .bg-white {
+            background: var(--card-bg) !important;
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--card-border);
+        }
+        
+        .bg-gray-800 {
+            background: var(--primary-bg-alt) !important;
+        }
+        
+        .text-gray-700, .text-gray-500, .text-gray-600 {
+            color: var(--text-secondary) !important;
+        }
+        
+        .border-gray-200 {
+            border-color: var(--card-border) !important;
+        }
+        
+        .bg-green-600 {
+            background: var(--accent-orange) !important;
+        }
+        
+        .bg-green-600:hover, .hover\:bg-green-500:hover {
+            background: #e68600 !important;
         }
     </style>
 </head>
-<body class="bg-gray-50 min-h-screen">
+<body style="background: linear-gradient(135deg, var(--primary-bg) 0%, var(--primary-bg-alt) 100%); color: var(--text-primary);" class="min-h-screen">
     <!-- Top Navigation Bar -->
-    <nav class="bg-gray-900 text-white">
+    <nav style="background: var(--primary-bg); color: var(--text-primary);">
         <div class="max-w-7xl mx-auto px-4">
             <div class="flex justify-center items-center h-12 text-sm">
                 <!-- Center Logo -->
