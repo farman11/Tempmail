@@ -6,6 +6,13 @@ TempMail is a Flask-based web application that provides users with temporary, di
 
 ## Recent Changes
 
+✓ **2025-07-19**: Fixed Database Configuration & Server Startup
+- Resolved SQLAlchemy URL parsing error that caused Internal Server Error
+- Created PostgreSQL database and configured DATABASE_URL environment variable
+- Application now starts successfully on port 5000 with multiple workers
+- Mail.tm API integration working properly with regular email polling
+- Server running stably with Gunicorn and proper database connectivity
+
 ✓ **2025-07-19**: Complete GitHub & Deployment Configuration
 - Created comprehensive README.md with features, installation, and deployment instructions
 - Added .gitignore for proper version control exclusions
