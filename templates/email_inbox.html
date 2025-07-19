@@ -165,15 +165,15 @@ setInterval(function() {
         refreshIcon.classList.add('auto-refresh-spinning');
     }
     
-    fetch('/fetch-emails', {
-        method: 'POST',
+    fetch('/fetch-emails/{{ temp_email.id }}', {
+        method: 'GET',
         headers: {
             'Content-Type': 'application/json',
         }
     })
     .then(response => response.json())
     .then(data => {
-        if (data.status === 'success' && data.new_messages > 0) {
+        if (data.status === 'success' && data.messages && data.messages.length > 0) {
             location.reload();
         }
     })
@@ -228,8 +228,8 @@ function fetchNewEmails() {
     icon.classList.add('refresh-spinning');
     button.disabled = true;
     
-    fetch('/fetch-emails', {
-        method: 'POST',
+    fetch('/fetch-emails/{{ temp_email.id }}', {
+        method: 'GET',
         headers: {
             'Content-Type': 'application/json',
         }
