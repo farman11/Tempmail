@@ -158,56 +158,56 @@
 
 {% block scripts %}
 <script>
-// Auto-refresh every 30 seconds - silent (only on email inbox pages)
-{% if temp_email and temp_email.id %}
-setInterval(function() {
-    const refreshIcon = document.querySelector('.refresh-btn i');
-    if (refreshIcon) {
-        refreshIcon.classList.add('auto-refresh-spinning');
-    }
+// Set email ID for auto-refresh
+const emailId = '{{ temp_email.id }}';
+
+// Auto-refresh functionality - only run on email inbox pages
+if (typeof emailId !== 'undefined' && emailId) {
+    console.log('Setting up auto-refresh for email ID:', emailId);
     
-    console.log('Auto-refresh fetching emails for ID:', '{{ temp_email.id }}');
-    fetch('/fetch-emails/{{ temp_email.id }}', {
-        method: 'GET',
-        headers: {
-            'Content-Type': 'application/json',
-        }
-    })
-    .then(response => {
-        if (!response.ok) {
-            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-        }
-        return response.json();
-    })
-    .then(data => {
-        console.log('Auto-refresh response:', data);
-        if (data.status === 'success') {
-            // Check if we have new messages by comparing with current count
-            const currentMessageCount = document.querySelectorAll('.email-item, [data-message-id], .bg-white.rounded-lg.shadow-md.p-4').length;
-            const newMessageCount = data.count || (data.messages ? data.messages.length : 0);
-            
-            console.log(`Current: ${currentMessageCount}, New: ${newMessageCount}`);
-            
-            if (newMessageCount > currentMessageCount) {
-                console.log('New messages detected, reloading...');
-                location.reload();
-            }
-        } else {
-            console.warn('Auto-refresh failed:', data.message);
-        }
-    })
-    .catch(error => {
-        console.error('Auto-refresh error:', error);
-    })
-    .finally(() => {
+    setInterval(function() {
+        const refreshIcon = document.querySelector('.refresh-btn i');
         if (refreshIcon) {
-            setTimeout(() => {
-                refreshIcon.classList.remove('auto-refresh-spinning');
-            }, 2000);
+            refreshIcon.classList.add('auto-refresh-spinning');
         }
-    });
-}, 30000);
-{% endif %}
+        
+        fetch('/fetch-emails/' + emailId)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('HTTP ' + response.status + ': ' + response.statusText);
+            }
+            return response.json();
+        })
+        .then(data => {
+            console.log('Auto-refresh response:', data);
+            if (data.status === 'success') {
+                // Count current email messages displayed
+                const currentMessageElements = document.querySelectorAll('.email-item, .message-item, .bg-white.rounded-lg.shadow-md');
+                const currentMessageCount = currentMessageElements.length;
+                const newMessageCount = data.count || 0;
+                
+                console.log('Current messages:', currentMessageCount, 'New count:', newMessageCount);
+                
+                if (newMessageCount > currentMessageCount) {
+                    console.log('New messages detected, reloading page...');
+                    location.reload();
+                }
+            }
+        })
+        .catch(error => {
+            console.warn('Auto-refresh failed:', error.message);
+        })
+        .finally(() => {
+            if (refreshIcon) {
+                setTimeout(() => {
+                    refreshIcon.classList.remove('auto-refresh-spinning');
+                }, 1000);
+            }
+        });
+    }, 15000); // Check every 15 seconds
+} else {
+    console.log('Auto-refresh not initialized: email ID not available');
+}
 
 // Remove the mark-read functionality since route doesn't exist
 // Messages are automatically marked as read when viewed
