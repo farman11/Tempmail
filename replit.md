@@ -6,6 +6,13 @@ TempMail is a Flask-based web application that provides users with temporary, di
 
 ## Recent Changes
 
+✓ **2025-07-19**: Removed Delete Functionality & Fixed Auto-refresh Issues
+- Completely removed delete buttons from homepage per user request
+- Fixed auto-refresh JavaScript to work with current email IDs from URL
+- Enhanced refresh button functionality for reliable page reloading
+- Improved error handling for email fetching and auto-refresh
+- Simplified manual refresh function to reload current page properly
+
 ✓ **2025-07-19**: Removed Database Dependency & Fixed Auto-refresh
 - Completely removed SQLAlchemy and PostgreSQL dependencies per user request
 - Converted application to use in-memory storage (temp_emails, email_messages dictionaries)  
