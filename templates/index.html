@@ -147,6 +147,13 @@
                 <button onclick="refreshEmails()" class="mt-6 text-gray-600 hover:text-gray-800 p-6 rounded-full refresh-emails-btn" title="Refresh Emails">
                     <i class="fas fa-sync-alt text-3xl refresh-icon-infinite"></i>
                 </button>
+                
+                <!-- Test Email Button -->
+                <div class="mt-4">
+                    <button onclick="addTestEmail()" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg transition-all duration-200" title="Add Test Email">
+                        <i class="fas fa-envelope mr-2"></i>Add Test Email
+                    </button>
+                </div>
             </div>
             {% endif %}
         </div>
@@ -303,6 +310,18 @@ function changeEmail() {
         document.body.appendChild(form);
         form.submit();
     }
+}
+
+// Add test email function
+function addTestEmail() {
+    {% if active_emails and active_emails|length > 0 %}
+    const emailId = '{{ active_emails[0].id }}';
+    
+    // Navigate to the test email route
+    window.location.href = '/add-test-email/' + emailId;
+    {% else %}
+    alert('Please generate an email address first!');
+    {% endif %}
 }
 
 // Delete email function

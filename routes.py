@@ -288,7 +288,7 @@ def add_test_email(email_id):
     
     email_messages[test_message.id] = test_message
     flash('Test email added successfully!', 'success')
-    return redirect(url_for('email_inbox', email_id=email_id))
+    return redirect(url_for('index'))
 
 # Helper function to clean expired emails
 def cleanup_expired_emails():
