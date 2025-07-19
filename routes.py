@@ -110,6 +110,7 @@ def fetch_emails(email_id):
     try:
         # Fetch emails from mail.tm service if available
         if temp_email.mail_tm_id:
+            logging.info(f"Fetching emails for account: {temp_email.email_address}")
             mail_tm_service.fetch_emails_for_account(temp_email, None, EmailMessage)
         
         # Get updated messages

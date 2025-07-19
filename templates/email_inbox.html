@@ -165,6 +165,7 @@ setInterval(function() {
         refreshIcon.classList.add('auto-refresh-spinning');
     }
     
+    console.log('Auto-refresh fetching emails for ID:', '{{ temp_email.id }}');
     fetch('/fetch-emails/{{ temp_email.id }}', {
         method: 'GET',
         headers: {
@@ -173,8 +174,13 @@ setInterval(function() {
     })
     .then(response => response.json())
     .then(data => {
+        console.log('Auto-refresh response:', data);
         if (data.status === 'success' && data.messages && data.messages.length > 0) {
-            location.reload();
+            // Check if we have new messages by comparing with current count
+            const currentMessageCount = document.querySelectorAll('.message-item').length;
+            if (data.messages.length > currentMessageCount) {
+                location.reload();
+            }
         }
     })
     .catch(error => {
@@ -189,26 +195,8 @@ setInterval(function() {
     });
 }, 30000);
 
-// Mark message as read
-document.querySelectorAll('.mark-read-btn').forEach(button => {
-    button.addEventListener('click', function() {
-        const messageId = this.dataset.messageId;
-        
-        fetch(`/mark-read/${messageId}`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            }
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.status === 'success') {
-                location.reload();
-            }
-        })
-        .catch(error => console.error('Error:', error));
-    });
-});
+// Remove the mark-read functionality since route doesn't exist
+// Messages are automatically marked as read when viewed
 
 // Refresh button - only if it exists
 const refreshBtn = document.querySelector('.refresh-btn');

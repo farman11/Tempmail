@@ -14,14 +14,14 @@
             <div class="flex flex-col sm:flex-row items-center justify-center sm:space-x-4 space-y-3 sm:space-y-0">
                 <code class="text-lg sm:text-xl font-mono text-white email-address-display overflow-text">{{ active_emails[0].email_address }}</code>
                 <div class="flex space-x-2">
-                    <button class="bg-gray-600 hover:bg-gray-500 text-white p-2 rounded copy-btn" 
-                            data-text="{{ active_emails[0].email_address }}" title="Copy">
+                    <button class="bg-gray-600 hover:bg-blue-500 text-white p-2 rounded copy-btn transition-all duration-200 hover:scale-110" 
+                            data-text="{{ active_emails[0].email_address }}" title="Copy Email">
                         <i class="fas fa-copy"></i>
                     </button>
                     
-                    <button class="bg-gray-600 hover:bg-gray-500 text-white p-2 rounded" 
-                        onclick="refreshEmails()" >
-                         <i class="fas fa-sync-alt "></i>
+                    <button class="bg-gray-600 hover:bg-green-500 text-white p-2 rounded transition-all duration-200 hover:scale-110" 
+                        onclick="refreshEmails()" title="Refresh Emails">
+                         <i class="fas fa-sync-alt"></i>
                     </button>
                    
                 </div>
@@ -52,24 +52,24 @@
 <div class="bg-white border-b border-gray-200 py-3 md:py-4">
     <div class="max-w-4xl mx-auto px-4 sm:px-6">
         <div class="flex justify-center space-x-3 sm:space-x-6 action-buttons">
-            <button class="flex items-center space-x-1 sm:space-x-2 text-gray-700 hover:text-black copy-btn text-sm sm:text-base" 
+            <button class="flex items-center space-x-1 sm:space-x-2 text-gray-700 hover:text-blue-600 hover:bg-blue-50 px-2 py-1 rounded transition-all duration-200 copy-btn text-sm sm:text-base" 
                     data-text="{{ active_emails[0].email_address }}">
                 <i class="fas fa-copy"></i>
                 <span class="hidden sm:inline">Copy</span>
             </button>
-          
 
-            <button class="flex items-center space-x-1 sm:space-x-2 text-gray-700 hover:text-black text-sm sm:text-base" onclick="refreshEmails()">
-                <i class="fas fa-sync-alt  "></i>
+            <button class="flex items-center space-x-1 sm:space-x-2 text-gray-700 hover:text-green-600 hover:bg-green-50 px-2 py-1 rounded transition-all duration-200 text-sm sm:text-base" onclick="refreshEmails()">
+                <i class="fas fa-sync-alt"></i>
                 <span class="hidden sm:inline">Refresh</span>
             </button>
             
-            <button class="flex items-center space-x-1 sm:space-x-2 text-gray-700 hover:text-black text-sm sm:text-base" onclick="changeEmail()">
+            <button class="flex items-center space-x-1 sm:space-x-2 text-gray-700 hover:text-purple-600 hover:bg-purple-50 px-2 py-1 rounded transition-all duration-200 text-sm sm:text-base" onclick="changeEmail()">
                 <i class="fas fa-edit"></i>
                 <span class="hidden sm:inline">Change</span>
             </button>
+            
             <button onclick="deleteEmail('{{ active_emails[0].id }}')" 
-                    class="flex items-center space-x-1 sm:space-x-2 text-gray-700 hover:text-red-600 text-sm sm:text-base">
+                    class="flex items-center space-x-1 sm:space-x-2 text-gray-700 hover:text-red-600 hover:bg-red-50 px-2 py-1 rounded transition-all duration-200 text-sm sm:text-base">
                 <i class="fas fa-times"></i>
                 <span class="hidden sm:inline">Delete</span>
             </button>
