@@ -375,16 +375,24 @@ function refreshEmails() {
     {% endif %}
 }
 
-// Enhanced automatic refresh with intelligent intervals
+// Enhanced automatic refresh with intelligent intervals - Fixed to prevent multiple refreshes
 function startAutoRefresh() {
     {% if active_emails and active_emails|length > 0 %}
     const emailId = '{{ active_emails[0].id }}';
+    
+    // Prevent multiple instances - only set up once
+    if (window.autoRefreshActive) {
+        console.log('Auto-refresh already active, skipping setup');
+        return;
+    }
+    
     console.log('Setting up auto-refresh for email ID:', emailId);
+    window.autoRefreshActive = true;
     
     // Initialize tracking variables
-    window.lastMessageCount = 0;
+    window.lastMessageCount = {{ active_emails[0].messages|length if active_emails[0].messages else 0 }};
     window.refreshErrorCount = 0;
-    window.autoRefreshInterval = null;
+    window.newMessageRefreshed = false;
     
     // Smart refresh intervals: More frequent when active, less when idle
     let refreshInterval = 10000; // Start with 10 seconds
@@ -420,19 +428,38 @@ function startAutoRefresh() {
             if (!data) return;
             
             if (data.status === 'success') {
+                const currentCount = data.count || 0;
                 const newCount = data.new_count || 0;
-                console.log('Current messages:', data.count, 'New count:', newCount);
+                console.log('Current messages:', currentCount, 'New count:', newCount);
                 
-                // Smart refresh logic: Only reload if there are changes
-                if (newCount > 0 || (window.lastMessageCount !== undefined && window.lastMessageCount !== data.count)) {
-                    window.lastMessageCount = data.count;
+                // Only refresh page once when there are actually NEW messages
+                if (newCount > 0 && !window.newMessageRefreshed) {
+                    console.log('New messages detected, refreshing page once');
+                    window.newMessageRefreshed = true;
+                    window.lastMessageCount = currentCount;
                     location.reload();
-                } else {
-                    // Adjust refresh interval based on activity
+                    return;
+                }
+                
+                // Reset the refresh flag if no new messages
+                if (newCount === 0) {
+                    window.newMessageRefreshed = false;
+                }
+                
+                // Update last count if changed but no new messages
+                if (window.lastMessageCount !== currentCount && newCount === 0) {
+                    window.lastMessageCount = currentCount;
+                }
+                
+                // Adjust refresh interval based on activity
+                if (newCount === 0) {
                     consecutiveEmptyChecks++;
                     if (consecutiveEmptyChecks > 5) {
-                        refreshInterval = Math.min(refreshInterval * 1.5, maxInterval);
+                        refreshInterval = Math.min(refreshInterval * 1.2, maxInterval);
                     }
+                } else {
+                    consecutiveEmptyChecks = 0;
+                    refreshInterval = 10000; // Reset to fast refresh when active
                 }
                 
                 window.refreshErrorCount = 0; // Reset error count on success
@@ -458,17 +485,19 @@ function startAutoRefresh() {
         });
     }
     
-    // Start intelligent auto-refresh
-    performAutoRefresh(); // Initial check
-    window.autoRefreshInterval = setInterval(performAutoRefresh, refreshInterval);
-    
-    // Adjust interval dynamically
-    setInterval(() => {
-        if (window.autoRefreshInterval) {
-            clearInterval(window.autoRefreshInterval);
-            window.autoRefreshInterval = setInterval(performAutoRefresh, refreshInterval);
-        }
-    }, 30000); // Adjust every 30 seconds
+    // Start intelligent auto-refresh with initial delay
+    setTimeout(() => {
+        performAutoRefresh(); // Initial check after 5 seconds
+        window.autoRefreshInterval = setInterval(performAutoRefresh, refreshInterval);
+        
+        // Dynamically adjust interval every 30 seconds
+        setInterval(() => {
+            if (window.autoRefreshInterval && window.autoRefreshActive) {
+                clearInterval(window.autoRefreshInterval);
+                window.autoRefreshInterval = setInterval(performAutoRefresh, refreshInterval);
+            }
+        }, 30000);
+    }, 5000);
     
     {% endif %}
 }
@@ -565,10 +594,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 
-// Start auto-refresh functionality
-document.addEventListener('DOMContentLoaded', function() {
-    startAutoRefresh();
-});
+// Auto-refresh will be started by the consolidated DOMContentLoaded event above
 
 // Process email content for better formatting and convert links to buttons
 function processEmailContentInline(emailBody) {
@@ -642,10 +668,7 @@ function makeLinksOpenInNewTab() {
     });
 }
 
-// Run the function when page loads and whenever email content is shown
-document.addEventListener('DOMContentLoaded', function() {
-    makeLinksOpenInNewTab();
-});
+// Links will be processed by the consolidated DOMContentLoaded event
 
 // Also run when email content is toggled (in case content is dynamically shown)
 const originalToggle = document.querySelectorAll('.toggle-email');
@@ -654,6 +677,29 @@ originalToggle.forEach(button => {
         // Small delay to let content appear before processing links
         setTimeout(makeLinksOpenInNewTab, 100);
     });
+});
+
+// Consolidated DOMContentLoaded event to prevent duplicate auto-refresh setup
+document.addEventListener('DOMContentLoaded', function() {
+    // Prevent duplicate auto-refresh setup
+    if (window.autoRefreshSetupComplete) {
+        console.log('Auto-refresh setup already completed, skipping');
+        return;
+    }
+    console.log('Setting up auto-refresh for the first time');
+    window.autoRefreshSetupComplete = true;
+    
+    // Clear any existing intervals before starting
+    if (window.autoRefreshInterval) {
+        clearInterval(window.autoRefreshInterval);
+    }
+    window.autoRefreshActive = false;
+    
+    // Process links in email content
+    makeLinksOpenInNewTab();
+    
+    // Start auto-refresh
+    startAutoRefresh();
 });
 </script>
 
