@@ -115,25 +115,48 @@
                         </div>
                     </div>
                     
-                    <!-- Email Content (Initially Hidden) -->
-                    <div id="email-content-{{ loop.index }}" class="hidden mt-3 sm:mt-4 p-3 sm:p-4 bg-gray-50 rounded-lg border" style="display: none;">
-                        <div class="mb-3 sm:mb-4 border-b border-gray-300 pb-3">
-                            <div class="email-header-grid grid grid-cols-1 sm:grid-cols-2 gap-1 sm:gap-2 text-xs sm:text-sm">
-                                <div class="overflow-text"><strong>From:</strong> {{ message.sender_name or (message.sender_email.split('@')[0] if message.sender_email else message.sender.split('@')[0]) }} &lt;{{ message.sender_email or message.sender }}&gt;</div>
-                                <div class="overflow-text"><strong>To:</strong> {{ active_emails[0].email_address }}</div>
-                                <div class="overflow-text"><strong>Subject:</strong> {{ message.subject }}</div>
-                                <div class="overflow-text"><strong>Date:</strong> {{ message.received_at.strftime('%Y-%m-%d %H:%M') if message.received_at else 'Unknown' }}</div>
+                    <!-- Email Content (Initially Hidden) - Gmail Style -->
+                    <div id="email-content-{{ loop.index }}" class="hidden mt-4 bg-white rounded-lg shadow-sm border border-gray-200" style="display: none;">
+                        <!-- Gmail-style Header -->
+                        <div class="p-4 border-b border-gray-100 bg-gray-50 rounded-t-lg">
+                            <div class="flex items-start justify-between mb-3">
+                                <div class="flex-1">
+                                    <h3 class="text-lg font-semibold text-gray-900 mb-1">{{ message.subject or 'No Subject' }}</h3>
+                                    <div class="text-sm text-gray-600">
+                                        <div class="mb-1">
+                                            <span class="font-medium">{{ message.sender_name or (message.sender_email.split('@')[0] if message.sender_email else 'Unknown') }}</span>
+                                            <span class="text-gray-500 ml-1">&lt;{{ message.sender_email or message.sender or 'unknown@example.com' }}&gt;</span>
+                                        </div>
+                                        <div class="text-xs text-gray-500">
+                                            to {{ active_emails[0].email_address }}
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="text-xs text-gray-500 ml-4">
+                                    {{ message.received_at.strftime('%b %d, %Y at %H:%M') if message.received_at else 'Unknown date' }}
+                                </div>
                             </div>
                         </div>
-                        <div class="email-body bg-white p-3 sm:p-4 rounded border">
+                        
+                        <!-- Gmail-style Email Body -->
+                        <div class="p-6">
                             {% if message.html_content and message.html_content|string and message.html_content|string|trim %}
-                                <div class="prose max-w-none email-content text-sm sm:text-base">{{ message.html_content|safe }}</div>
+                                <div class="gmail-email-content">
+                                    {{ message.html_content|safe }}
+                                </div>
                             {% elif message.text_content and message.text_content|string and message.text_content|string|trim %}
-                                <div class="whitespace-pre-wrap text-xs sm:text-sm email-content overflow-text">{{ message.text_content }}</div>
+                                <div class="gmail-email-content text-content">
+                                    {{ message.text_content|replace('\n', '<br>')|safe }}
+                                </div>
                             {% elif message.body and message.body|string and message.body|string|trim %}
-                                <div class="whitespace-pre-wrap text-xs sm:text-sm email-content overflow-text">{{ message.body }}</div>
+                                <div class="gmail-email-content text-content">
+                                    {{ message.body|replace('\n', '<br>')|safe }}
+                                </div>
                             {% else %}
-                                <div class="text-gray-500 italic text-sm">No message content available</div>
+                                <div class="text-gray-500 italic text-center py-8">
+                                    <i class="fas fa-envelope-open text-2xl mb-2"></i>
+                                    <p>No message content available</p>
+                                </div>
                             {% endif %}
                         </div>
                     </div>
@@ -482,4 +505,131 @@ originalToggle.forEach(button => {
     });
 });
 </script>
+
+<style>
+/* Gmail-style email content styling */
+.gmail-email-content {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    font-size: 14px;
+    line-height: 1.6;
+    color: #202124;
+}
+
+.gmail-email-content h1,
+.gmail-email-content h2,
+.gmail-email-content h3,
+.gmail-email-content h4,
+.gmail-email-content h5,
+.gmail-email-content h6 {
+    margin: 0 0 12px 0;
+    font-weight: 600;
+    color: #1a73e8;
+}
+
+.gmail-email-content p {
+    margin: 0 0 16px 0;
+    color: #3c4043;
+}
+
+.gmail-email-content a {
+    color: #1a73e8;
+    text-decoration: none;
+    border-radius: 4px;
+    padding: 8px 16px;
+    background-color: #1a73e8;
+    color: white !important;
+    display: inline-block;
+    margin: 8px 0;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+.gmail-email-content a:hover {
+    background-color: #1557b0;
+    box-shadow: 0 2px 4px rgba(26, 115, 232, 0.3);
+}
+
+.gmail-email-content .text-content {
+    white-space: pre-wrap;
+}
+
+.gmail-email-content table {
+    border-collapse: collapse;
+    width: 100%;
+    margin: 16px 0;
+}
+
+.gmail-email-content th,
+.gmail-email-content td {
+    border: 1px solid #dadce0;
+    padding: 8px 12px;
+    text-align: left;
+}
+
+.gmail-email-content th {
+    background-color: #f8f9fa;
+    font-weight: 500;
+}
+
+.gmail-email-content blockquote {
+    border-left: 4px solid #1a73e8;
+    margin: 16px 0;
+    padding: 8px 16px;
+    background-color: #f8f9fa;
+    color: #5f6368;
+    font-style: italic;
+}
+
+.gmail-email-content ul,
+.gmail-email-content ol {
+    padding-left: 20px;
+    margin: 12px 0;
+}
+
+.gmail-email-content li {
+    margin: 4px 0;
+}
+
+.gmail-email-content code {
+    background-color: #f1f3f4;
+    border-radius: 4px;
+    padding: 2px 6px;
+    font-family: 'Roboto Mono', monospace;
+    font-size: 13px;
+}
+
+/* Professional verification codes highlighting */
+.gmail-email-content .verification-code {
+    background: linear-gradient(135deg, #1a73e8 0%, #4285f4 100%);
+    color: white;
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-family: 'Roboto Mono', monospace;
+    font-weight: 600;
+    letter-spacing: 2px;
+    display: inline-block;
+    margin: 8px 4px;
+    box-shadow: 0 2px 8px rgba(26, 115, 232, 0.2);
+}
+
+/* Professional buttons from links */
+.gmail-email-content .action-button {
+    background: linear-gradient(135deg, #34d399 0%, #10b981 100%);
+    color: white;
+    padding: 12px 24px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 600;
+    display: inline-block;
+    margin: 16px 8px;
+    box-shadow: 0 4px 12px rgba(52, 211, 153, 0.3);
+    transition: all 0.3s ease;
+}
+
+.gmail-email-content .action-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(52, 211, 153, 0.4);
+}
+</style>
+
 {% endblock %}
