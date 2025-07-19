@@ -170,6 +170,11 @@ if (emailId && emailId !== '' && emailId !== 'inbox') {
         fetch('/fetch-emails/' + emailId)
         .then(response => {
             if (!response.ok) {
+                if (response.status === 404) {
+                    console.warn('Email ID not found, redirecting to homepage...');
+                    window.location.href = '/';
+                    return;
+                }
                 console.warn('Auto-refresh failed: HTTP ' + response.status);
                 return;
             }

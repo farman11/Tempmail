@@ -142,8 +142,8 @@ def fetch_emails(email_id):
     # Verify ownership
     temp_email = temp_emails.get(email_id)
     if not temp_email:
-        logging.error(f"Email not found: {email_id}")
-        return jsonify({'status': 'error', 'message': 'Email not found'}), 404
+        logging.error(f"Email not found: {email_id}, redirecting to create new email")
+        return jsonify({'status': 'error', 'message': 'Email not found', 'redirect': '/'}), 404
     
     if temp_email.session_id != session_id:
         logging.error(f"Session mismatch: {temp_email.session_id} != {session_id}")
