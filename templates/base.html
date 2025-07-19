@@ -72,26 +72,54 @@
             word-wrap: break-word;
             overflow-wrap: break-word;
         }
+        
+        /* Enhanced email button styling */
         .email-body a {
-            color: #1d4ed8;
-            text-decoration: none;
-            word-break: break-all;
+            text-decoration: none !important;
         }
-        .email-body a:hover {
-            text-decoration: underline;
-        }
-        .verification-code {
-            background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
-            color: #1d4ed8;
-            padding: 8px 16px;
-            border-radius: 8px;
-            font-weight: 700;
-            font-family: monospace;
+        
+        .email-body a.inline-block {
             display: inline-block;
-            margin: 4px;
-            border: 2px solid #1d4ed8;
-            letter-spacing: 2px;
-            word-break: break-all;
+            margin: 8px 8px 8px 0;
+            padding: 10px 16px;
+            background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+            color: white !important;
+            border-radius: 8px;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 4px rgba(37, 99, 235, 0.2);
+        }
+        
+        .email-body a.inline-block:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+            background: linear-gradient(135deg, #1d4ed8 0%, #1e40af 100%);
+        }
+        
+        /* Verification code styling */
+        .verification-code,
+        .email-body span[style*="background"] {
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%) !important;
+            color: #92400e !important;
+            padding: 4px 12px !important;
+            border-radius: 6px !important;
+            font-weight: bold !important;
+            font-family: 'SF Mono', 'Monaco', 'Inconsolata', monospace !important;
+            font-size: 1.1em !important;
+            letter-spacing: 0.5px !important;
+            border: 1px solid #f59e0b !important;
+        }
+        
+        /* Clean email text formatting */
+        .email-body p {
+            margin-bottom: 12px;
+        }
+        
+        .email-body code {
+            background: #f3f4f6;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: monospace;
         }
         
         /* Mobile-specific styles */

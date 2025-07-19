@@ -128,9 +128,9 @@
                             {% if message.html_content and message.html_content.strip() %}
                                 <div class="prose max-w-none email-content text-sm sm:text-base">{{ message.html_content|safe }}</div>
                             {% elif message.text_content and message.text_content.strip() %}
-                                <div class="whitespace-pre-wrap font-mono text-xs sm:text-sm email-content overflow-text">{{ message.text_content }}</div>
+                                <div class="whitespace-pre-wrap text-xs sm:text-sm email-content overflow-text">{{ message.text_content }}</div>
                             {% elif message.body and message.body.strip() %}
-                                <div class="whitespace-pre-wrap font-mono text-xs sm:text-sm email-content overflow-text">{{ message.body }}</div>
+                                <div class="whitespace-pre-wrap text-xs sm:text-sm email-content overflow-text">{{ message.body }}</div>
                             {% else %}
                                 <div class="text-gray-500 italic text-sm">No message content available</div>
                             {% endif %}
@@ -295,11 +295,19 @@ document.addEventListener('DOMContentLoaded', function() {
                     // Show the content
                     content.style.display = 'block';
                     content.classList.remove('hidden');
-                    icon.className = 'fas fa-eye-slash';
+                    if (icon) {
+                        icon.className = 'fas fa-eye-slash';
+                    }
                     console.log('Showing email content');
                     
-                    // Make all links in this email content open in new tabs
+                    // Process email content for better formatting and links
                     setTimeout(() => {
+                        const emailContentDiv = content.querySelector('.email-content');
+                        if (emailContentDiv) {
+                            processEmailContentInline(emailContentDiv);
+                        }
+                        
+                        // Make all links in this email content open in new tabs
                         content.querySelectorAll('a').forEach(link => {
                             link.setAttribute('target', '_blank');
                             link.setAttribute('rel', 'noopener noreferrer');
@@ -309,7 +317,9 @@ document.addEventListener('DOMContentLoaded', function() {
                     // Hide the content
                     content.style.display = 'none';
                     content.classList.add('hidden');
-                    icon.className = 'fas fa-eye';
+                    if (icon) {
+                        icon.className = 'fas fa-eye';
+                    }
                     console.log('Hiding email content');
                 }
             } else {
@@ -323,6 +333,70 @@ document.addEventListener('DOMContentLoaded', function() {
 setInterval(function() {
     refreshEmails();
 }, 30000);
+
+// Process email content for better formatting and convert links to buttons
+function processEmailContentInline(emailBody) {
+    if (!emailBody) return;
+    
+    let content = emailBody.textContent || emailBody.innerText || '';
+    
+    // Clean up JSON formatting characters
+    content = content.replace(/[{}"\[\]]/g, '');
+    content = content.replace(/,\s*/g, ', ');
+    content = content.replace(/:\s*/g, ': ');
+    
+    // Convert URLs to buttons with dynamic names
+    content = content.replace(
+        /(https?:\/\/[^\s]+)/g,
+        function(match, url) {
+            let buttonText = 'Visit Link';
+            
+            // Extract domain for button text
+            try {
+                const urlObj = new URL(url);
+                const domain = urlObj.hostname.replace('www.', '');
+                
+                // Set specific button text based on common domains
+                if (domain.includes('verify') || url.includes('verify')) {
+                    buttonText = 'Verify Account';
+                } else if (domain.includes('confirm') || url.includes('confirm')) {
+                    buttonText = 'Confirm Email';
+                } else if (domain.includes('github')) {
+                    buttonText = 'Go to GitHub';
+                } else if (domain.includes('google')) {
+                    buttonText = 'Go to Google';
+                } else if (domain.includes('amazon')) {
+                    buttonText = 'Go to Amazon';
+                } else if (domain.includes('facebook')) {
+                    buttonText = 'Go to Facebook';
+                } else if (domain.includes('twitter') || domain.includes('x.com')) {
+                    buttonText = 'Go to Twitter/X';
+                } else if (domain.includes('lovable')) {
+                    buttonText = 'Go to Lovable';
+                } else {
+                    buttonText = `Go to ${domain.charAt(0).toUpperCase() + domain.slice(1)}`;
+                }
+            } catch (e) {
+                // If URL parsing fails, keep default text
+                buttonText = 'Visit Link';
+            }
+            
+            return `<a href="${url}" target="_blank" rel="noopener noreferrer" 
+                   class="inline-block bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition-colors duration-200 my-2 mr-2">
+                   <i class="fas fa-external-link-alt mr-1"></i> ${buttonText}
+                   </a>`;
+        }
+    );
+    
+    // Highlight verification codes (4-8 digit numbers)
+    content = content.replace(
+        /\b(\d{4,8})\b/g, 
+        '<span class="bg-yellow-100 text-yellow-800 px-2 py-1 rounded font-mono font-bold">$1</span>'
+    );
+    
+    // Update email body with processed content
+    emailBody.innerHTML = content;
+}
 
 // Function to make all links in email content open in new tabs
 function makeLinksOpenInNewTab() {

@@ -91,8 +91,12 @@
                         
                         <!-- Gmail-style Email Body -->
                         <div class="gmail-email-content">
-                            {% if message.body %}
-                                <div class="email-body prose max-w-none">{{ message.body|safe }}</div>
+                            {% if message.html_content and message.html_content.strip() %}
+                                <div class="email-body prose max-w-none">{{ message.html_content|safe }}</div>
+                            {% elif message.text_content and message.text_content.strip() %}
+                                <div class="email-body whitespace-pre-wrap">{{ message.text_content }}</div>
+                            {% elif message.body %}
+                                <div class="email-body whitespace-pre-wrap">{{ message.body }}</div>
                             {% else %}
                                 <em class="text-gray-500">No content available</em>
                             {% endif %}
@@ -240,7 +244,7 @@ function fetchNewEmails() {
     });
 }
 
-// Copy email content functionality
+// Enhanced email content functionality
 document.addEventListener('DOMContentLoaded', function() {
     // Copy button functionality for both email content and email addresses
     document.querySelectorAll('.copy-btn, .copy-email-btn').forEach(button => {
@@ -251,13 +255,17 @@ document.addEventListener('DOMContentLoaded', function() {
             navigator.clipboard.writeText(content).then(() => {
                 // Show success feedback with Tailwind styling
                 this.innerHTML = '<i class="fas fa-check mr-1"></i> Copied!';
-                this.classList.remove('bg-blue-600', 'hover:bg-blue-700');
-                this.classList.add('bg-green-600');
+                if (this.classList.contains('bg-blue-600')) {
+                    this.classList.remove('bg-blue-600', 'hover:bg-blue-700');
+                    this.classList.add('bg-green-600');
+                }
                 
                 setTimeout(() => {
                     this.innerHTML = originalContent;
-                    this.classList.remove('bg-green-600');
-                    this.classList.add('bg-blue-600', 'hover:bg-blue-700');
+                    if (this.classList.contains('bg-green-600')) {
+                        this.classList.remove('bg-green-600');
+                        this.classList.add('bg-blue-600', 'hover:bg-blue-700');
+                    }
                 }, 2000);
             }).catch(err => {
                 console.error('Could not copy text: ', err);
@@ -271,48 +279,102 @@ document.addEventListener('DOMContentLoaded', function() {
                 
                 // Show success feedback
                 this.innerHTML = '<i class="fas fa-check mr-1"></i> Copied!';
-                this.classList.remove('bg-blue-600', 'hover:bg-blue-700');
-                this.classList.add('bg-green-600');
+                if (this.classList.contains('bg-blue-600')) {
+                    this.classList.remove('bg-blue-600', 'hover:bg-blue-700');
+                    this.classList.add('bg-green-600');
+                }
                 
                 setTimeout(() => {
                     this.innerHTML = originalContent;
-                    this.classList.remove('bg-green-600');
-                    this.classList.add('bg-blue-600', 'hover:bg-blue-700');
+                    if (this.classList.contains('bg-green-600')) {
+                        this.classList.remove('bg-green-600');
+                        this.classList.add('bg-blue-600', 'hover:bg-blue-700');
+                    }
                 }, 2000);
             });
         });
     });
     
-    // Make links in emails clickable and safe
-    document.querySelectorAll('.email-body a').forEach(link => {
-        link.setAttribute('target', '_blank');
-        link.setAttribute('rel', 'noopener noreferrer');
-        link.style.cursor = 'pointer';
-        
-        // Add visual indication for links
-        if (!link.textContent.startsWith('http')) {
-            link.style.textDecoration = 'underline';
-        }
+    // Process email content to enhance formatting and convert links
+    function processEmailContent() {
+        document.querySelectorAll('.email-body').forEach(emailBody => {
+            let content = emailBody.textContent || emailBody.innerText || '';
+            
+            // Clean up JSON formatting characters
+            content = content.replace(/[{}"\[\]]/g, '');
+            content = content.replace(/,\s*/g, ', ');
+            content = content.replace(/:\s*/g, ': ');
+            
+            // Convert URLs to buttons with dynamic names
+            content = content.replace(
+                /(https?:\/\/[^\s]+)/g,
+                function(match, url) {
+                    let buttonText = 'Visit Link';
+                    
+                    // Extract domain for button text
+                    try {
+                        const urlObj = new URL(url);
+                        const domain = urlObj.hostname.replace('www.', '');
+                        
+                        // Set specific button text based on common domains
+                        if (domain.includes('verify') || url.includes('verify')) {
+                            buttonText = 'Verify Account';
+                        } else if (domain.includes('confirm') || url.includes('confirm')) {
+                            buttonText = 'Confirm Email';
+                        } else if (domain.includes('github')) {
+                            buttonText = 'Go to GitHub';
+                        } else if (domain.includes('google')) {
+                            buttonText = 'Go to Google';
+                        } else if (domain.includes('amazon')) {
+                            buttonText = 'Go to Amazon';
+                        } else if (domain.includes('facebook')) {
+                            buttonText = 'Go to Facebook';
+                        } else if (domain.includes('twitter') || domain.includes('x.com')) {
+                            buttonText = 'Go to Twitter/X';
+                        } else if (domain.includes('lovable')) {
+                            buttonText = 'Go to Lovable';
+                        } else {
+                            buttonText = `Go to ${domain.charAt(0).toUpperCase() + domain.slice(1)}`;
+                        }
+                    } catch (e) {
+                        // If URL parsing fails, keep default text
+                        buttonText = 'Visit Link';
+                    }
+                    
+                    return `<a href="${url}" target="_blank" rel="noopener noreferrer" 
+                           class="inline-block bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition-colors duration-200 my-2 mr-2">
+                           <i class="fas fa-external-link-alt mr-1"></i> ${buttonText}
+                           </a>`;
+                }
+            );
+            
+            // Highlight verification codes (4-8 digit numbers)
+            content = content.replace(
+                /\b(\d{4,8})\b/g, 
+                '<span class="bg-yellow-100 text-yellow-800 px-2 py-1 rounded font-mono font-bold">$1</span>'
+            );
+            
+            // Update email body with processed content
+            emailBody.innerHTML = content;
+        });
+    }
+    
+    // Process content on page load
+    processEmailContent();
+    
+    // Also process when new content is loaded dynamically
+    const observer = new MutationObserver(function(mutations) {
+        mutations.forEach(function(mutation) {
+            if (mutation.type === 'childList' && mutation.addedNodes.length > 0) {
+                processEmailContent();
+            }
+        });
     });
     
-    // Format verification codes and important numbers
-    document.querySelectorAll('.email-body').forEach(emailBody => {
-        // Highlight potential verification codes (4-8 digit numbers)
-        let content = emailBody.innerHTML;
-        
-        // Pattern for verification codes
-        content = content.replace(
-            /\b(\d{4,8})\b/g, 
-            '<span class="verification-code">$1</span>'
-        );
-        
-        // Pattern for URLs that aren't already links
-        content = content.replace(
-            /(https?:\/\/[^\s<]+)/g,
-            '<a href="$1" target="_blank" rel="noopener noreferrer">$1</a>'
-        );
-        
-        emailBody.innerHTML = content;
+    // Start observing
+    observer.observe(document.body, {
+        childList: true,
+        subtree: true
     });
 });
 </script>
