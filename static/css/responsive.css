@@ -125,6 +125,40 @@
         justify-content: center;
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
     }
+    
+    /* Enhanced responsive message layout */
+    .message-responsive {
+        position: relative;
+    }
+    
+    /* Mobile card-style borders */
+    .border-l-3 {
+        border-left-width: 3px;
+    }
+    
+    /* Better mobile text wrapping */
+    .break-words {
+        word-wrap: break-word;
+        word-break: break-word;
+        hyphens: auto;
+    }
+    
+    .break-all {
+        word-break: break-all;
+    }
+    
+    /* Enhanced mobile email layout */
+    .message-responsive {
+        background: #ffffff;
+        border-radius: 0.5rem;
+        margin-bottom: 0.5rem;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
+    
+    /* Mobile header improvements */
+    .inbox-responsive {
+        background: #f8fafc;
+    }
 }
 
 /* Small Mobile (320px - 479px) */
