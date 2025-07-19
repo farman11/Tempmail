@@ -199,6 +199,8 @@ class MailTMService:
             from app import email_messages
             
             for msg in messages:
+                logging.debug(f"Processing message: {msg['id']} - {msg.get('subject', 'No subject')}")
+                
                 # Check if message already exists in memory
                 existing = False
                 for msg_id, stored_msg in email_messages.items():
@@ -207,13 +209,20 @@ class MailTMService:
                         existing = True
                         break
                 
+                if not existing:
+                    logging.info(f"New message found: {msg['id']} - {msg.get('subject', 'No subject')}")
+                
                 if existing:
+                    logging.debug(f"Message {msg['id']} already exists, skipping")
                     continue
                 
                 # Get message details
                 details = self.get_message_details(msg['id'], token)
                 if not details:
+                    logging.error(f"Failed to get details for message {msg['id']}")
                     continue
+                
+                logging.info(f"Processing new message: {msg.get('subject', 'No subject')}")
                 
                 # Extract sender information
                 from_info = details.get('from', {})
@@ -241,6 +250,7 @@ class MailTMService:
                 # Store in memory
                 email_messages[email_msg.id] = email_msg
                 new_messages += 1
+                logging.info(f"Successfully stored message: {email_msg.subject} from {email_msg.sender_email}")
             
             if new_messages > 0:
                 logging.info(f"Fetched {new_messages} new messages for {temp_email.email_address}")

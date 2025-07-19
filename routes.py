@@ -23,7 +23,7 @@ def index():
     for email_id, email in temp_emails.items():
         if (email.session_id == session_id and 
             email.is_active and 
-            not hasattr(email, 'is_expired') or not email.is_expired):
+            (not hasattr(email, 'is_expired') or not email.is_expired)):
             active_emails.append(email)
     
     # AUTO-GENERATE EMAIL: If no active emails, create one automatically
@@ -77,6 +77,9 @@ def index():
         
         # Attach messages to the email object
         email.messages = messages
+        logging.info(f"Email {email.email_address} has {len(messages)} messages attached")
+        for i, msg in enumerate(messages):
+            logging.info(f"  Message {i+1}: {msg.subject} from {msg.sender_email}")
     
     return render_template('index.html', 
                          active_emails=active_emails)
