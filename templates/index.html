@@ -152,34 +152,71 @@
                             {% if email_content %}
                                 <div class="gmail-email-content professional-email-message" id="email-body-{{ loop.index }}">
                                     {% set clean_content = email_content.replace('["', '').replace('"]', '').replace('\\r\\n', '\n').replace('\r\n', '\n').replace('\\n', '\n') %}
-                                    {% set lines = clean_content.split('\n') %}
+                                    
+                                    {# Remove HTML tags and extract plain text and links #}
+                                    {% set processed_content = clean_content.replace('<p>', '').replace('</p>', '\n').replace('<br>', '\n').replace('<br/>', '\n').replace('<br />', '\n') %}
+                                    {% set lines = processed_content.split('\n') %}
                                     
                                     {% for line in lines %}
                                         {% if line.strip() %}
-                                            {% if line.strip().startswith('http') %}
+                                            {# Check if line contains HTML link tag #}
+                                            {% if '<a href=' in line %}
+                                                {# Extract URL from HTML link #}
+                                                {% set url_start = line.find("href='") + 6 %}
+                                                {% if url_start == 5 %}
+                                                    {% set url_start = line.find('href="') + 6 %}
+                                                    {% set url_end = line.find('"', url_start) %}
+                                                {% else %}
+                                                    {% set url_end = line.find("'", url_start) %}
+                                                {% endif %}
+                                                
+                                                {% if url_start > 5 and url_end > url_start %}
+                                                    {% set extracted_url = line[url_start:url_end] %}
+                                                    <div class="email-link-section">
+                                                        <a href="{{ extracted_url }}" target="_blank" rel="noopener noreferrer" class="email-link-button">
+                                                            {% if 'verify' in extracted_url.lower() %}
+                                                                Verify Email
+                                                            {% elif 'confirm' in extracted_url.lower() %}
+                                                                Confirm Account
+                                                            {% elif 'activate' in extracted_url.lower() %}
+                                                                Activate Account
+                                                            {% elif 'reset' in extracted_url.lower() %}
+                                                                Reset Password
+                                                            {% elif 'download' in extracted_url.lower() %}
+                                                                Download
+                                                            {% elif 'login' in extracted_url.lower() %}
+                                                                Login
+                                                            {% elif 'signup' in extracted_url.lower() %}
+                                                                Sign Up
+                                                            {% else %}
+                                                                Open Link
+                                                            {% endif %}
+                                                        </a>
+                                                    </div>
+                                                {% endif %}
+                                            {% elif line.strip().startswith('http') %}
+                                                {# Plain URL line #}
                                                 <div class="email-link-section">
                                                     <a href="{{ line.strip() }}" target="_blank" rel="noopener noreferrer" class="email-link-button">
                                                         {% if 'verify' in line.lower() %}
                                                             Verify Email
                                                         {% elif 'confirm' in line.lower() %}
-                                                            Confirm
+                                                            Confirm Account
                                                         {% elif 'activate' in line.lower() %}
-                                                            Activate
+                                                            Activate Account
                                                         {% elif 'reset' in line.lower() %}
                                                             Reset Password
-                                                        {% elif 'download' in line.lower() %}
-                                                            Download
-                                                        {% elif 'login' in line.lower() %}
-                                                            Login
-                                                        {% elif 'signup' in line.lower() %}
-                                                            Sign Up
                                                         {% else %}
                                                             Open Link
                                                         {% endif %}
                                                     </a>
                                                 </div>
                                             {% else %}
-                                                <p class="email-paragraph">{{ line.strip() }}</p>
+                                                {# Regular text line - strip any remaining HTML tags #}
+                                                {% set clean_line = line.replace('<a href=', '').replace('</a>', '').replace('>', '') %}
+                                                {% if clean_line.strip() and not clean_line.strip().startswith('http') %}
+                                                    <p class="email-paragraph">{{ clean_line.strip() }}</p>
+                                                {% endif %}
                                             {% endif %}
                                         {% endif %}
                                     {% endfor %}
